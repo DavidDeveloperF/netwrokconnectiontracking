@@ -8,6 +8,13 @@ Setting up background activities = https://pub.dev/packages/workmanager
 blog post about it - https://medium.com/vrt-digital-studio/flutter-workmanager-81e0cfbd6f6e
 
 
+Version 1.0.0+4
+===============
+todo: push to github
+todo: fix the screen/display version
+todo: integrate network, SIM, location and speedtest
+todo: update the session and values classes
+
 Version 1.0.0+3
 ===============
 - wasted a LOT of time on SDK and flutter problems. See NEVER UPDATE SDK.TXT
