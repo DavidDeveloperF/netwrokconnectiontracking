@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.0.0+4
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -27,15 +27,19 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
+  intl: ^0.16.1                     # date formats & international stuff
   cupertino_icons: ^1.0.0
-  android_device_info: ^1.0.0       # implements APIs to read device info
+  android_device_info: ^1.0.0       # implements APIs to read (lots of) device info
   permission: ^0.1.7                # do I need this?
   permission_handler: 4.4.0         # obviously this is for permissions
   html: ^0.14.0+3                   # seem to need this for permissions  too??
 
-#  device_info: ^0.4.2+4             # to allow me to check OS, device, PALTFORM etc
+  package_info: ^0.4.0+6            # to retrieve package build and version details
+  internet_speed_test: ^1.1.2+1     # test internet connection speed
+
+  device_info: ^0.4.2+4             # to allow me to check OS, device, PLATFORM etc
 #  google_maps_flutter: ^0.5.28+1    # 0.10a latest google maps
-#  location: ^3.0.0                  # 0.10d to get current location
+  location: ^3.0.0                  # 0.10d to get current location
 
 #  firebase_core: ^0.4.4+3           # I have this in flutter_map
 #  firebase_auth: ^0.16.0            # Firebase authentication (user login)
