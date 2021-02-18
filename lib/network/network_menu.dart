@@ -14,28 +14,55 @@ class NetworkTab extends StatefulWidget {
 }
 
 class _NetworkTabState extends State<NetworkTab> {
-  var data = {};
+  var screenData = {};
 
   @override
   void initState() {
     super.initState();
-
-    getAllData(
-                true,     // display
-                true,     // battery
-                true,     // memory
-                true,     // network
-                true,     // NFC
-                true,     // Location
-                true,     // SIM
-    );              // getData is the async function to load the device info
+    _getNetwork();
+    _getSIM();
+    _getNfc();
   }
+
+  void _getNetwork() async {
+    String _whereAmI =   "_getNetwork";
+    try {
+        final network = await AndroidDeviceInfo().getNetworkInfo();
+        setState(() {
+          screenData.addAll(network);
+        });
+      } catch (e) {
+        myDebugPrint("The exception thrown is $e", _whereAmI, true);
+      }
+    } // end of getNetwork
+  void _getSIM() async {
+    String _whereAmI =   "_getSIM";
+    try {
+        final SIM = await AndroidDeviceInfo().getSimInfo();
+        setState(() {
+          screenData.addAll(SIM);
+        });
+      } catch (e) {
+        myDebugPrint("The exception thrown is $e", _whereAmI, true);
+      }
+    } // end of getNetwork
+  void _getNfc() async {
+    String _whereAmI =   "_getNFC";
+    try {
+        final Nfc = await AndroidDeviceInfo().getNfcInfo();
+        setState(() {
+          screenData.addAll(Nfc);
+        });
+      } catch (e) {
+        myDebugPrint("The exception thrown is $e", _whereAmI, true);
+      }
+    } // end of getNetwork
 
 
   @override
   Widget build(BuildContext context) {
     //                                                                    if no data, return Circle
-    if (data.isEmpty) {
+    if (screenData.isEmpty) {
       return Center(child: CircularProgressIndicator());
     }
     //                                                                    (implied) else, we HAVE data
@@ -43,28 +70,28 @@ class _NetworkTabState extends State<NetworkTab> {
       child: Column(
         children: <Widget>[
           Divider(),
-          RowItem('Network Available', '${data['isNetworkAvailable']}'),
-          RowItem('Network', '${data['networkType']}'),
-          RowItem('iPv4 Address', '${data['iPv4Address']}'),
-          RowItem('iPv6 Address', '${data['iPv6Address']}'),
-          RowItem('WiFi Enabled', '${data['isWifiEnabled']}'),
-          RowItem('WiFi SSID', '${data['wifiSSID']}'),
-          RowItem('WiFi BSSID', '${data['wifiBSSID']}'),
-          RowItem('WiFi Speed', '${data['wifiLinkSpeed']}'),
+          RowItem('Network Available',  '${screenData['isNetworkAvailable']}'),
+          RowItem('Network',            '${screenData['networkType']}'),
+          RowItem('iPv4 Address',       '${screenData['iPv4Address']}'),
+          RowItem('iPv6 Address',       '${screenData['iPv6Address']}'),
+          RowItem('WiFi Enabled',       '${screenData['isWifiEnabled']}'),
+          RowItem('WiFi SSID',          '${screenData['wifiSSID']}'),
+          RowItem('WiFi BSSID',         '${screenData['wifiBSSID']}'),
+          RowItem('WiFi Speed',         '${screenData['wifiLinkSpeed']}'),
           RowItem('Signal strength(Cellular)', '???'),
-          RowItem('WiFi MAC', '${data['wifiMAC']}'),
+          RowItem('WiFi MAC',           '${screenData['wifiMAC']}'),
           Divider(),
-          RowItem('NFC Present', '${data['isNfcPresent']}'),
-          RowItem('NFC Enabled', '${data['isNfcEnabled']}'),
+          RowItem('NFC Present',        '${screenData['isNfcPresent']}'),
+          RowItem('NFC Enabled',        '${screenData['isNfcEnabled']}'),
           Divider(),
-          RowItem('IMSI', '${data['imsi']}'),
-          RowItem('Serial', '${data['serial']}'),
-          RowItem('Country', '${data['country']}'),
-          RowItem('Carrier', '${data['carrier']}'),
-          RowItem('SIM Locked', '${data['isSimNetworkLocked']}'),
-          RowItem('activeMultiSimInfo', '${data['activeMultiSimInfo']}'),
-          RowItem('Multi SIM', '${data['isMultiSim']}'),
-          RowItem('Active SIM(s)', '${data['numberOfActiveSim']}'),
+          RowItem('IMSI',               '${screenData['imsi']}'),
+          RowItem('Serial',             '${screenData['serial']}'),
+          RowItem('Country',            '${screenData['country']}'),
+          RowItem('Carrier',            '${screenData['carrier']}'),
+          RowItem('SIM Locked',         '${screenData['isSimNetworkLocked']}'),
+          RowItem('activeMultiSimInfo', '${screenData['activeMultiSimInfo']}'),
+          RowItem('Multi SIM',          '${screenData['isMultiSim']}'),
+          RowItem('Active SIM(s)',      '${screenData['numberOfActiveSim']}'),
           Divider(),
         ],
       ),

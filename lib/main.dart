@@ -125,7 +125,7 @@ class _DisplayNetworkStuffState extends State<DisplayNetworkStuff> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Network info"),),
+      appBar: AppBar(title: Text("Network info" + getShortDateStringFromDate(DateTime.now())),),
       body:   NetworkTab(),
     );
   }

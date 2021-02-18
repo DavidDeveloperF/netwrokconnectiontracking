@@ -10,10 +10,15 @@ blog post about it - https://medium.com/vrt-digital-studio/flutter-workmanager-8
 
 Version 1.0.0+4
 ===============
-todo: push to github
+todo: push to github        [ lots of problems with authentication]
 todo: fix the screen/display version
 todo: integrate network, SIM, location and speedtest
 todo: update the session and values classes
+??  Pixel 4 seemed to flash up a prompt about 'Allow USB debugging'
+    - this might be why I can't use it in SDK
+    - struggling to find the setting
+        https://my-techspace.com/how-to-enable-usb-debugging-and-developer-options-on-android-11/
+    - device keeps freezing and popping up 'not responding' msg
 
 Version 1.0.0+3
 ===============
