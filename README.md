@@ -14,6 +14,10 @@ More work
     todo:   Maps and get map API code
     todo: Can I fix this? >> Plugin project :location_web not found. Please update settings.gradle.
 
+version: 1.0.1+0
+===============
+1) tidy up getNetwork
+
 Version 1.0.0+4
 ===============
 sort of working... problems with accessing SIM details

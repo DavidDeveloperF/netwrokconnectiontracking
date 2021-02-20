@@ -27,13 +27,19 @@ void getNetworkFunction(){
 getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
     bool getNFC,     bool getLocation, bool getSIM ) async {
 
+  bool showDebugDetails     = false;
   String whereAmI = "getAllData";
   String whereAmIDetail;
   var data = {};                                  // data is a generic variable
 
   workingConnectionValuesChanged = false;         // just setup a value
+  if (workingConnectionValuesIndex == null) {
+    workingConnectionValuesIndex =0;
+    if (workingTrackerSessionIndex == null) {
+      workingTrackerSessionIndex =0;
+      workingTrackerSession = defaultTrackerSession;}}
 
-  // # final XXXXXX = await AndoridDeviceInfo().getXXXXX();
+  // # final XXXXXX = await AndoridDeviceInfo().getXXXXX();               todo: why is this 'final'
   // #       appears to return a Map with all the values for Key + Value
   // # Eg:   Future<Map<dynamic, dynamic>> getMemoryInfo({String unit = "bytes"}) async {
   // #
@@ -42,9 +48,10 @@ getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
   if(getDisplay){  try {
     whereAmIDetail = whereAmI + " display";
     final display = await AndroidDeviceInfo().getDisplayInfo();                // display data
+    if (showDebugDetails){                                                    // don't always want debug detail
     display.forEach((key, value) {
       myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });
+    });}
     data.addAll(display);
   } catch (e) {
     myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
@@ -53,9 +60,10 @@ getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
   if(getBattery) {try {
     whereAmIDetail = whereAmI + " battery";
     final battery = await AndroidDeviceInfo().getBatteryInfo();                // battery data
+    if (showDebugDetails){                                                    // don't always want debug detail
     battery.forEach((key, value) {
       myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });
+    });}
     data.addAll(battery);
   } catch (e) {
     myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
@@ -64,9 +72,10 @@ getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
   if(getMemory) {try {
     whereAmIDetail = whereAmI + " memory";
     final memory = await AndroidDeviceInfo().getMemoryInfo();                 // memory data
-    memory.forEach((key, value) {
+    if (showDebugDetails){                                                    // don't always want debug detail
+      memory.forEach((key, value) {
       myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });
+    });}
     data.addAll(memory);
   } catch (e) {
     myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
@@ -75,9 +84,10 @@ getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
   if(getNetwork) {try {
     whereAmIDetail = whereAmI + " network";
     final network = await AndroidDeviceInfo().getNetworkInfo();                // Network data
-    network.forEach((key, value) {
+    if (showDebugDetails){                                                    // don't always want debug detail
+      network.forEach((key, value) {
       myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });
+    });}
     data.addAll(network);
   } catch (e) {
     myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
@@ -86,27 +96,29 @@ getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
   if(getNFC) {try {
     whereAmIDetail = whereAmI + " nfc";
     final nfc = await AndroidDeviceInfo().getNfcInfo();                        // NFC data
-    nfc.forEach((key, value) {
-      myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });
+    if (showDebugDetails){                                                    // don't always want debug detail
+        nfc.forEach((key, value) {
+        myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
+      });}
     data.addAll(nfc);
-  } catch (e) {
-    myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-  }} // end of getNFC
+      } catch (e) {
+        myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
+      }} // end of getNFC
 
-  if(getLocation) {try {
+  if(getLocation) {try {                            // TODO this does not seem to be working???
     whereAmIDetail = whereAmI + " location";
     final location = await AndroidDeviceInfo().getLocationInfo();                // location data
-    location.forEach((key, value) {
-      myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });
+    if (showDebugDetails){                                                    // don't always want debug detail
+      location.forEach((key, value) {
+        myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
+      });}
     data.addAll(location);
-  } catch (e) {
-    myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-  }}  // end of getLocation
+      } catch (e) {
+          myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
+      }}  // end of getLocation
 
   // maybe working - not sure
-  // todo: follow up obscure errors dependingont eh device / android version
+  // todo: follow up obscure errors depending on the device / android version
   if (getSIM) {try {
     whereAmIDetail = whereAmI + " sim";
     var sim = await AndroidDeviceInfo().getSimInfo();                         // SIM data

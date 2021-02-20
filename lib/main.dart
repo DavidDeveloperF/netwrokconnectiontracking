@@ -1,12 +1,11 @@
 // core / external packages
 import 'package:flutter/material.dart';
-import 'package:networkconnectiontracking/network/network_class.dart';
 // app
-import 'package:networkconnectiontracking/network/network_menu.dart';
+import 'package:networkconnectiontracking/network/network_class.dart';
 import 'package:networkconnectiontracking/network/pollnetwork.dart';
 import 'package:networkconnectiontracking/main_variables.dart';
-import 'package:networkconnectiontracking/network/speedtest_menu.dart';
 import 'package:networkconnectiontracking/utils/utilities.dart';
+import 'package:networkconnectiontracking/test_menu.dart';
 
 void main() {
   runApp(MyApp());
@@ -48,6 +47,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // TODO: implement initState
     super.initState();
     connectionValuesList = [];    // initialise connectionValuesList
+    trackerSessionList = [];    // initialise connectionValuesList
+
     getVersionNumber();         // get app version/build
     futureCheckPlatform();      // get device info
   }
@@ -74,57 +75,9 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text("Run network widget"),
               color: Colors.blueAccent,
               onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => DisplayNetworkStuff())),
+                    MaterialPageRoute(builder: (context) => MyTestMenu())),
             ),
-            RaisedButton(                                                     // download speed
-              child: Text("Download speed (background)"),
-              color: Colors.red,
-              onPressed: (){
-                backgroundDownload();
-              },
-            ),
-            RaisedButton(                                                     // upload speed
-              child: Text("Upload speed (background)"),
-              color: Colors.red,
-              onPressed: (){
-                backgroundUpload();
-              },
-            ),
-            RaisedButton(                                                     // get network display
-              child: Text("Run speed test"),
-              color: Colors.blueAccent,
-              onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => MySpeedTestMenu())),
-            ),
-            RaisedButton(                                                     // get network FUNCTION
-              child: Text("Run network function"),
-              color: Colors.green,
-              onPressed: () async {
-                debugPrint("ABOUT TO RUN getNetworkFunction ~~~~~~~~~~~~~~~~~~~~~~~");
-                getNetworkFunction();
-                debugPrint("after RUNNING getNetworkFunction ~~~~~~~~~~~~~~~~~~~~~~~");
-                if (workingConnectionValues != null) {
-                  debugPrint("INSIDE  workingConnectionValues != NULL ~~~~~~~~~~~~~~~");
-                  connectionValuesList.add(workingConnectionValues);
-                  Navigator.push(context,
-                      MaterialPageRoute(
-                          builder: (context) => MyNetworkConnectionDetail()));
-                }
-              },
-                ),
-            RaisedButton(                                                     // get network FUNCTION
-              child: Text("Run network menu"),
-              color: Colors.yellowAccent,
-              onPressed: () async {
-                if (workingConnectionValues != null) {
-                  debugPrint("INSIDE  workingConnectionValues != NULL ~~~~~~~~~~~~~~~");
-                  connectionValuesList.add(workingConnectionValues);
-                  Navigator.push(context,
-                      MaterialPageRoute(
-                          builder: (context) => MyNetworkConnectionDetail()));
-                } //end of IF
-              }, // end of onPressed
-                ),
+
                 RaisedButton(                                                     // get Sensor FUNCTION
                 child: Text("Run Sensors function"),
               color: Colors.green,
@@ -138,21 +91,6 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-}
-
-class DisplayNetworkStuff extends StatefulWidget {
-  @override
-  _DisplayNetworkStuffState createState() => _DisplayNetworkStuffState();
-}
-
-class _DisplayNetworkStuffState extends State<DisplayNetworkStuff> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Network info" + getShortDateStringFromDate(DateTime.now())),),
-      body:   NetworkTab(),
     );
   }
 }

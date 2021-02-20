@@ -125,6 +125,7 @@ class MyNetworkConnectionDetail extends StatefulWidget {
 }
 
 class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
+  String whereAmI = "_MyNetworkConnectionDetailState";
   bool isEditAllowed = true; // todo sort this out later
   TextEditingController locationTextEdit = new TextEditingController();
 
@@ -143,7 +144,8 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
   Future<bool> _onWillPop() async {
 
     if (workingConnectionValuesChanged == null) {
-      debugPrint("## ?? onWillPop workingConnectionValuesChanged = null");
+      myDebugPrint("workingConnectionValuesChanged = null"
+        , whereAmI +"#onWillpop", false);
       Navigator.of(context).pop(true);
       return false;
     } else {
@@ -179,20 +181,18 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
     // TODO: implement initState
     super.initState();
     if (updateEditControllers()) {
-      debugPrint("?? debug InitState updateEditControllers");
+      myDebugPrint("?? debug InitState updateEditControllers"
+      ,whereAmI+"#initState", false );
     }
   }
 
   bool updateEditControllers() {
-    debugPrint("updateEditControllers EXECUTED !");
     locationTextEdit.text  =  workingConnectionValues.locationText;
     return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    myDebugPrint("connectionValuesList[0] ${connectionValuesList[0].carrier} ${connectionValuesList[0].dateTimeText} ",
-        "DetailedChatThreadMenu / build", false);
     return new WillPopScope(
         onWillPop: _onWillPop,
         child: Scaffold(
