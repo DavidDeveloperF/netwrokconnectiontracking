@@ -3,22 +3,50 @@
 Keep track of network signal strength and plot on the map
 
 ## Getting Started
-Setting up background activities = https://pub.dev/packages/workmanager
-================================
-blog post about it - https://medium.com/vrt-digital-studio/flutter-workmanager-81e0cfbd6f6e
 
+ToDO: Setting up background activities = https://pub.dev/packages/workmanager
+        blog post about it - https://medium.com/vrt-digital-studio/flutter-workmanager-81e0cfbd6f6e
+
+More work
+    todo:   include onWillPop - to trap accidental exits
+    todo:   Login menu - can't user Firebase without it
+    todo:   onFirstthingy & splash screens (and user preferences)
+    todo:   Maps and get map API code
+    todo: Can I fix this? >> Plugin project :location_web not found. Please update settings.gradle.
 
 Version 1.0.0+4
 ===============
+sort of working... problems with accessing SIM details
+    network function oK-ish.  It create workingConnectionValues & adds to connectionValuesList
+    basic screen to view and scroll through connectionValuesList
+
 todo: push to github        [ lots of problems with authentication]
-todo: fix the screen/display version
-todo: integrate network, SIM, location and speedtest
-todo: update the session and values classes
+        New install of Git code may have worked ??
+DONE: fix the screen/display version [no longer using the getAll routine - I need to use setState]
+DONE: integrate network, SIM, location
+todo: integrate speedtest
+DONE: update the session and values classes [ SEE EXCEL ]
+todo: can I suppress the huge amount of logging in the speedtest?
+
+
+*   Pixel 3 and Nexus 5X both working, but they do generate lots and lots more logging
+    (API 29 10)  26/8.0
+
 ??  Pixel 4 seemed to flash up a prompt about 'Allow USB debugging'
     - this might be why I can't use it in SDK
     - struggling to find the setting
         https://my-techspace.com/how-to-enable-usb-debugging-and-developer-options-on-android-11/
     - device keeps freezing and popping up 'not responding' msg
+    - tried Restart (using ~90% of laptop CPU ... for about 45mins ! )
+
++   I created a new Firebase RTDB, need to document this before I forget
+    >> not implemented in the app yet.
+    >> only created in firebase console
+        Authentication - email/password only
+        Location - Belgium (only US and EU available)
+        Rule - TEST MODE (all authenticated users can read/write)
+        https://networkconnectiontracking-default-rtdb.europe-west1.firebasedatabase.app/
+    todo: get jSON codes to allow app Firebase access
 
 Version 1.0.0+3
 ===============

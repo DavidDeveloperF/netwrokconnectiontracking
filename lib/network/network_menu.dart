@@ -1,9 +1,11 @@
 // external
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:android_device_info/android_device_info.dart';
+import 'package:swipe_gesture_recognizer/swipe_gesture_recognizer.dart';
 // app code
 import 'package:networkconnectiontracking/utils/utilities.dart';
+import 'package:networkconnectiontracking/network/network_class.dart';
+import 'package:networkconnectiontracking/main_variables.dart';
 
 
 
@@ -116,192 +118,444 @@ Widget RowItem(String colTitle, String resultString) {
   ]);
 }
 
-// ############################################################################
-// # getAllData
-// # goes through the main info APIs and saves the result in data
-// ############################################################################
-getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
-           bool getNFC,     bool getLocation, bool getSIM ) async {
-  String whereAmI = "getAllData";
-  String whereAmIDetail;
-  var data = {};                                  // data is a generic variable
-
-  // # final XXXXXX = await AndoridDeviceInfo().getXXXXX();
-  // #       appears to return a Map with all the values for Key + Value
-  // # Eg:   Future<Map<dynamic, dynamic>> getMemoryInfo({String unit = "bytes"}) async {
-  // #
-  // # so I can XXXXXX.ForEach to loop through them
-
-  if(getDisplay){  try {
-      whereAmIDetail = whereAmI + " display";
-      final display = await AndroidDeviceInfo().getDisplayInfo();                // display data
-      display.forEach((key, value) {
-        myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-      });
-      data.addAll(display);
-    } catch (e) {
-        myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-    }}                                                                          // end of getDisplay
-
-  if(getBattery) {try {
-    whereAmIDetail = whereAmI + " battery";
-    final battery = await AndroidDeviceInfo().getBatteryInfo();                // battery data
-    battery.forEach((key, value) {
-      myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });
-    data.addAll(battery);
-  } catch (e) {
-    myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-  }}                                                                          // end of getBattery
-
-  if(getMemory) {try {
-    whereAmIDetail = whereAmI + " memory";
-    final memory = await AndroidDeviceInfo().getMemoryInfo();                 // memory data
-    memory.forEach((key, value) {
-      myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });
-    data.addAll(memory);
-  } catch (e) {
-      myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-  }}                                                                          // end of getMemory
-
-  if(getNetwork) {try {
-    whereAmIDetail = whereAmI + " network";
-    final network = await AndroidDeviceInfo().getNetworkInfo();                // Network data
-    network.forEach((key, value) {
-      myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });
-    data.addAll(network);
-  } catch (e) {
-    myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-  }}                                                                          // end of getNetwork
-
-  if(getNFC) {try {
-    whereAmIDetail = whereAmI + " nfc";
-    final nfc = await AndroidDeviceInfo().getNfcInfo();                        // NFC data
-    nfc.forEach((key, value) {
-      myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });
-    data.addAll(nfc);
-  } catch (e) {
-    myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-  }} // end of getNFC
-
-  if(getLocation) {try {
-    whereAmIDetail = whereAmI + " location";
-    final location = await AndroidDeviceInfo().getLocationInfo();                // location data
-    location.forEach((key, value) {
-      myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });
-    data.addAll(location);
-  } catch (e) {
-    myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-  }}  // end of getLocation
-
-  // maybe working - not sure
-  // todo: follow up obscure errors dependingont eh device / android version
-  if (getSIM) {try {
-    whereAmIDetail = whereAmI + " sim";
-    var sim = await AndroidDeviceInfo().getSimInfo();                         // SIM data
-    sim.forEach((key, value) {
-      myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });
-    data.addAll(sim);
-  } catch (e) {
-    myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-  }}                              // end of getSIM
-
-
-  // Part of the original code...............
-  // this appears to be checking whether user has given access to permission     PHONE
-  var permission =
-  await PermissionHandler().checkPermissionStatus(PermissionGroup.phone);
-  if (permission == PermissionStatus.denied) {
-    //                                         if no permission, request permission
-    var permissions =
-    await PermissionHandler().requestPermissions([PermissionGroup.phone]);
-    if (permissions[PermissionGroup.phone] == PermissionStatus.granted) {
-      var sim = await AndroidDeviceInfo().getSimInfo();
-      data.addAll(sim);
-    } // end of GRANTED
-  } // end of DENIED
-
-  // my clone of the above
-  // this appears to be checking whether user has given access to permission     LOCATION (always)
-  var permissionLoc =
-  await PermissionHandler().checkPermissionStatus(PermissionGroup.locationAlways);
-  if (permissionLoc == PermissionStatus.denied) {
-    //                                         if no permission, request permission
-    var permissionsLoc =
-    await PermissionHandler().requestPermissions([PermissionGroup.locationAlways]);
-    if (permissionsLoc[PermissionGroup.locationAlways] == PermissionStatus.granted) {
-      var location = await AndroidDeviceInfo().getLocationInfo();
-      data.addAll(location);
-    }     // end of GRANTED
-  }     // end of DENIED
-
-}   // end of getData
-
-class SensorInfo {
-  String     vendor;                          // who made the sensor
-  String     name;                            // What is the sensor
-  double     maximumRange;                    // what is the raneg of values
-  double     power;                           // not sure what it means by 'Power'
-  int        version;                         //  version of sensor
-  double     resolution;                      // smallest change in value (probably)
-  SensorInfo ({
-    this.vendor,
-    this.name,
-    this.maximumRange,
-    this.power,
-    this.version,
-    this.resolution,
-  });
+// ############################################################################  MyNetworkConnectionDetail
+class MyNetworkConnectionDetail extends StatefulWidget {
+  @override
+  _MyNetworkConnectionDetailState createState() => _MyNetworkConnectionDetailState();
 }
 
-SensorInfo  workingSensorInfo;                       // a working or current SensorInfo set
-// List<SensorInfo> sensorInfoList;                       // array to store SensorInfo values
-//int     workingSensorInfoIndex;                                   // integer index of current place in the array
-//bool workingSensorInfoChanged;                           // bool to flag whether working___ has been changed
+class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
+  bool isEditAllowed = true; // todo sort this out later
+  TextEditingController locationTextEdit = new TextEditingController();
 
 
-
-// ############################################################################# getSensorInfo
-// # gets sensor info - this is a different format from the other device info
+  // ############################################################################   _onWillPop
+// # onWillPop
+// # Catch BACK button which might not be intended to exit the app
 // #
-// # todo:  probably need to establish common variables to share the result data
-// #############################################################################
-void getSensorInfo() async {
-// # sensorInfo does not behave the same as the others ?????
-// # Eg   Future<List<dynamic>> getSensorInfo() async {
-// #      It returns s List not a map ??
-// #  Why does it do this?
-// #  .. I can see why - there's a complicated data structure - see below examples
-// I/flutter (15345): sensorInfo Counter: 9  Element: {vendor: The Android Open Source Project, name: Goldfish 3-axis Magnetic field sensor (uncalibrated), maximumRange: 2000.0, power: 6.699999809265137, version: 1, resolution: 0.5}
-// I/flutter (15345): sensorInfo Counter: 10  Element: {vendor: AOSP, name: Game Rotation Vector Sensor, maximumRange: 1.0, power: 12.699999809265137, version: 3, resolution: 5.960464477539063e-8}
+// # you have to wrap the main build Scaffold as follows:
+//
+//  Widget build(BuildContext context) {
+//    return new WillPopScope(
+//        onWillPop: _onWillPop,
+//        child: Scaffold(
+// ############################################################################
+  Future<bool> _onWillPop() async {
 
-  String whereAmI = "getSensorInfo";
+    if (workingConnectionValuesChanged == null) {
+      debugPrint("## ?? onWillPop workingConnectionValuesChanged = null");
+      Navigator.of(context).pop(true);
+      return false;
+    } else {
+      if (!workingConnectionValuesChanged) {
+        Navigator.of(context).pop(true);
+        return false;
+      } else {
+        return (await showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Exit without saving?'),
+            content: new Text(
+                'Are you sure you want to this item, without saving changes?'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('No'),
+              ),
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: new Text('Yes'),
+              ),
+            ],
+          ),
+        )) ??
+            false;
+      }
+    }
+  } // end of _onWillPop
 
-  try {
-    final sensorInfo = await AndroidDeviceInfo().getSensorInfo();                // Sensor data
-    int _counter = 0;
-    sensorInfo.forEach((element) {
-      // myDebugPrint("sensorInfo Counter: $_counter  Element: " + element.toString()
-      //     ,  whereAmI, false);
-      workingSensorInfo = SensorInfo(
-        name:         element['name'],
-        vendor:       element['vendor'],
-        version:      element['version'],
-        power:        element['power'],
-        maximumRange: element['maximumRange'],
-        resolution:   element['resolution'],
-      );
-     myDebugPrint("sensor present: " + workingSensorInfo.name
-         ,  whereAmI, false);
-
-      _counter = _counter +1;
-    });
-  } catch (e) {
-    myDebugPrint("## ERROR ## The exception thrown is $e", whereAmI, true);
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (updateEditControllers()) {
+      debugPrint("?? debug InitState updateEditControllers");
+    }
   }
+
+  bool updateEditControllers() {
+    debugPrint("updateEditControllers EXECUTED !");
+    locationTextEdit.text  =  workingConnectionValues.locationText;
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    myDebugPrint("connectionValuesList[0] ${connectionValuesList[0].carrier} ${connectionValuesList[0].dateTimeText} ",
+        "DetailedChatThreadMenu / build", false);
+    return new WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+          appBar: AppBar(
+            title: Text("MyNetworkConnectionDetail " + liveOrTest),
+          ),
+          body: Column(children: <Widget>[
+// my header row                                                                 my header row
+            Row(
+              children: <Widget>[
+                Text("${getLongDateString(DateTime.now())}  "
+                    "Current selection: "),
+                Text("  item: "),
+                Text(
+                  (workingConnectionValuesIndex + 1).toString(),
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(" of "),
+                Text(
+                  connectionValuesList.length.toString(),
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            Text(" "),
+// actual body                                                                   actual body
+            SwipeGestureRecognizer(
+              onSwipeLeft: () {
+                swipeLeftOrClickNext();
+              },
+              onSwipeRight: () {
+                swipeRightOrClickPrevious();
+              },
+//        onSwipeRight() {
+//        // DO STUFF WHEN RIGHT SWIPE GESTURE DETECTED
+//      },
+
+              child: Container(
+                // This works !                     Subtract ~120 to allow for the AppBar
+                height: MediaQuery.of(context).size.height - 250.0,
+                width: MediaQuery.of(context).size.width - 40.0,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Row(children: <Widget>[
+                          if (updateEditControllers()) Text("threadId: "),
+                          Text(
+                            workingConnectionValues.key,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
+// 0.801                                                     Topic Dropdown     Accidentally changed this to workingConnectionValues
+//                         DropChatTopic(),
+//                         Row(
+//                           children: <Widget>[
+//                             Expanded(
+//                               child: TextField(
+//                                 onChanged: (text) {
+//                                   workingConnectionValues.description = text;
+//                                   workingConnectionValuesChanged = true;
+//                                 },
+//                                 decoration: InputDecoration(
+//                                   labelText: "description",
+//                                 ),
+//                                 keyboardType: TextInputType.text,
+//                                 // expands: true,
+//                                 // minLines: 1,
+//                                 maxLines: null,
+//                                 style: TextStyle(
+//                                     color: Colors.green,
+//                                     fontWeight: FontWeight.bold),
+//                                 controller: descriptionEdit,
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: TextField(
+                                onChanged: (text) {
+                                  workingConnectionValues.locationText = text;
+                                  workingConnectionValuesChanged = true;
+                                },
+                                decoration: InputDecoration(
+                                  labelText: "locationText",
+                                ),
+                                keyboardType: TextInputType.text,
+                                style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold),
+                                maxLines: 1,
+                                controller: locationTextEdit,
+                              ),
+                            ),
+                          ],
+                        ),
+  // below code copied from class spreadsheet - column M     
+                        Row(children: <Widget>[ Text("key: " ) ,  Text(workingConnectionValues.key,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        Row(children: <Widget>[ Text("sequenceNo: " ) ,  Text(workingConnectionValues.sequenceNo.toString(),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        Row(children: <Widget>[ Text("dateTimeInt: " ) ,  Text(workingConnectionValues.dateTimeInt.toString(),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        Row(children: <Widget>[ Text("dateTimeText: " ) ,  Text(workingConnectionValues.dateTimeText,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        Row(children: <Widget>[ Text("lat: " ) ,  Text(workingConnectionValues.lat.toStringAsFixed(4),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        Row(children: <Widget>[ Text("lng: " ) ,  Text(workingConnectionValues.lng.toStringAsFixed(4),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        Row(children: <Widget>[ Text("locationText: " ) ,  Text(workingConnectionValues.locationText,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        Row(children: <Widget>[ Text("isNetworkAvailable: " ) ,  Text(workingConnectionValues.isNetworkAvailable.toString(),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        Row(children: <Widget>[ Text("networkType: " ) ,  Text(workingConnectionValues.networkType,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        Row(children: <Widget>[ Text("isWifiEnabled: " ) ,  Text(workingConnectionValues.isWifiEnabled.toString(),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        Row(children: <Widget>[ Text("wifiLinkSpeed: " ) ,  Text(workingConnectionValues.wifiLinkSpeed,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        Row(children: <Widget>[ Text("wifiSSID: " ) ,  Text(workingConnectionValues.wifiSSID,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                    //    Row(children: <Widget>[ Text("carrier: " ) ,  Text(workingConnectionValues.carrier,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                    //    Row(children: <Widget>[ Text("downloadSpeed: " ) ,  Text(workingConnectionValues.downloadSpeed.toStringAsFixed(4),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                    //    Row(children: <Widget>[ Text("uploadSpeed: " ) ,  Text(workingConnectionValues.uploadSpeed.toStringAsFixed(4),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                    //    Row(children: <Widget>[ Text("speedUnits: " ) ,  Text(workingConnectionValues.speedUnits,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+
+                        RaisedButton(
+                          child: Text("DELETE !"),
+                          color: Colors.red,
+                          onPressed: () {
+                            deleteConnectionValuesFunction(
+                                context, workingConnectionValuesIndex);
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ]),
+
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                if (workingConnectionValuesChanged) {
+// always use 'Update' as both save and add (using my own key)
+                  updateConnectionValues(workingConnectionValues);
+// need to Pop back after save
+                  Navigator.pop(context); // Go back after Update/Save.
+                }
+//            AddNewChatThreadFunction(workingWorkout);      // UPDATE!  not save new
+              });
+              // Navigator.push(context,
+              //     MaterialPageRoute(builder: (context) => DetailedChatThreadMenu()));
+            },
+            tooltip: 'Save',
+            child: Icon(Icons.save),
+          ), // This trailing comma makes auto-formatting nicer for build methods.
+        ));
+  }
+
+  // ######################################################################
+// # 0.30c  DELETE sighting !
+// #        MOVED INSIDE _DisplaySightingsListState to access setState
+// # 0.34b  now moved inside _DisplaySightingDetailsState so you
+// #        can only delete from the detailed menu, not the list
+// ############################################################################
+// ***************************************************************************  deleteSightingFunction
+  void deleteConnectionValuesFunction(BuildContext context, int index) {
+    bool isDeleteAllowed = false;
+    String deletePromptText =
+        "Only the creator of a ChatThread (or an Administrator) can delete it";
+    whereAmI = "deleteConnectionValuesFunction";
+
+//    bool sure = false;
+    myDebugPrint("index $index about to showDialog"
+      , whereAmI, false);
+
+// todo   REINSTATE review the delete authorisation
+    // if (isEditAllowed) {
+    //   isDeleteAllowed = true;
+    //   deletePromptText = "Are you sure you want to delete this item?";
+    // } else {
+    //   if (currentUser.uid == connectionValuesList[index].createUser) {
+    //     isDeleteAllowed = true;
+    //     deletePromptText = "Are you sure you want to delete your item?";
+    //   }
+    // }
+    deletePromptText =
+        deletePromptText + "\nItem: " 
+            + connectionValuesList[index].lat.toStringAsFixed(4) +
+            " / "
+            + connectionValuesList[index].lat.toStringAsFixed(4);
+
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+          title: Text(liveOrTest + " Delete?",),
+          content: Text(deletePromptText, ),
+          actions: <Widget>[
+             RaisedButton(
+                onPressed: () {
+                  myDebugPrint(
+                      "** $whereAmI index $index - Pressed #Yes#  - is delete allowed? = $isDeleteAllowed",
+                      whereAmI, false);
+                  // 0.31c  Fortunately, this WORKS !
+                  if (isDeleteAllowed) {
+                    String _tempId = connectionValuesList[index].key;
+                    myDebugPrint(
+                        "** $whereAmI: Delete ${connectionValuesList[index].locationText} at $index attempted.try"
+                            " id: ${connectionValuesList[index].key}",
+                        whereAmI, false);
+
+                    //debugPrint(chatThreadRef.toString());
+                    // workoutRef = TestWorkout/
+                    //                            Yoga/
+                    //  workoutRef.child(_chatThread.type + '/' + _chatThread.threadId).set({
+// todo REINSTATE DATABASE CALL HERE
+//                     chatThreadRef
+//                         .child(connectionValuesList[index].threadId)
+//                         .remove()
+//                         .then((_) {
+//                       // 0.34f  KEEP delete logs
+//                       myDebugPrint(
+//                           "Delete $_tempId at $index successful ${connectionValuesList[index].locationText} ",
+//                           whereAmI, false);
+//                       //  this is part of .then, so delete will have been completed
+//                       setState(() {
+//                         //  remove the entry from the List (to match the database)
+//                         connectionValuesList.removeAt(index);
+//                         //  now move to previous entry in the List (to match the database)
+//                         if (workingConnectionValuesIndex > 0) {
+//                           workingConnectionValuesIndex =
+//                               workingConnectionValuesIndex - 1;
+//                         } else {
+//                           workingConnectionValuesIndex = 0;
+//                         }
+//                         // And finally refresh the detailed screen
+//                         workingConnectionValues =
+//                         connectionValuesList[workingConnectionValuesIndex];
+//                       }); // end of setSate
+//                     }).catchError((onError) {
+//                       myDebugPrint(
+//                           "** FAILED !! ** Couldn't delete **  - *** error: ${onError.toString()}",
+//                           whereAmI);
+//                       myDebugPrint(
+//                           "** FAILED ?? ** delete of $_tempId", whereAmI);
+//                     }); // end of .then
+                  } // end of if allowed
+                  Navigator.of(context).pop();
+                }, // end of onPressed (Yes)
+                child: Text("Yes")),
+            new FlatButton(
+                onPressed: () {
+                  myDebugPrint("index $index - Pressed #No#", whereAmI, false );
+                  Navigator.of(context).pop();
+                },
+                child: Text("No")),
+          ],
+        ));
+  } // end of _deleteMenuItem
+
+  // pull out common code from navigator function to allow swipe to use it too
+  void swipeRightOrClickPrevious() {
+    if (workingConnectionValuesIndex >= 1) {
+      // todo:  need to check for changes & save them if required
+      // todo:  Do I need to Await this?
+      if (workingConnectionValuesChanged) {
+        showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Exit without saving?'),
+            content: new Text(
+                'Are you sure you want to this item, without saving changes?'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () {
+                  debugPrint("cancelled");
+                  Navigator.pop(context); // Go back
+                },
+                child: new Text('No'),
+              ),
+//                                                               added in SAVE button 0.801a
+              new FlatButton(
+                onPressed: () {
+                  debugPrint("save & proceed");
+                  updateConnectionValues(workingConnectionValues);
+                  Navigator.pop(context);             // Continue ?
+                },
+                child: new Text('SAVE'),
+              ),
+              new FlatButton(
+                onPressed: () {
+                  workingConnectionValuesChanged = false;
+                  Navigator.pop(context); // Go back
+                },
+                child: new Text('Yes'),
+              ),
+            ],
+          ),
+        );
+      } // end of if workoutchanged
+
+      // if user wants to abandon changes, then we turn off Changed, ('Yes' above)
+      if (!workingConnectionValuesChanged) {
+        setState(() {
+          workingConnectionValuesIndex = workingConnectionValuesIndex - 1;
+          workingConnectionValues = connectionValuesList[workingConnectionValuesIndex];
+        });
+      } // Do nothing if workoutchanged
+    }
+  }
+
+  void swipeLeftOrClickNext() {
+    if (workingConnectionValuesIndex + 1 < connectionValuesList.length) {
+      // todo:  need to check for changes & save them if required
+      // todo:  Do I need to Await this?
+      if (workingConnectionValuesChanged) {
+        showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Exit without saving?'),
+            content: new Text(
+                'Are you sure you want to this item, without saving changes?'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () {
+                  debugPrint("cancelled");
+                },
+                child: new Text('No'),
+              ),
+//                                                               added in SAVE button 0.801a
+              new FlatButton(
+                onPressed: () {
+                  debugPrint("save & proceed");
+                  updateConnectionValues(workingConnectionValues);
+                  Navigator.pop(context);             // Continue ?
+                },
+                child: new Text('SAVE'),
+              ),
+              new FlatButton(
+                onPressed: () => workingConnectionValuesChanged = false,
+                child: new Text('Yes'),
+              ),
+            ],
+          ),
+        );
+      } // end of if chatThreadChanged
+
+      // if user wants to abandon changes, then we turn off Changed, ('Yes' above)
+      if (!workingConnectionValuesChanged) {
+        setState(() {
+          workingConnectionValuesIndex = workingConnectionValuesIndex + 1;
+          workingConnectionValues = connectionValuesList[workingConnectionValuesIndex];
+        });
+      } // Do nothing if workoutchanged
+    }
+  }
+}
+
+void updateConnectionValues(ConnectionValues _connection) {
+  myDebugPrint("UPDATE" +
+      _connection.key +" / " +
+      _connection.dateTimeText +" / " +
+      _connection.lat.toStringAsFixed(4) +" / " +
+      _connection.lng.toStringAsFixed(4) +" / "
+  , "** $whereAmI ", false);
 }

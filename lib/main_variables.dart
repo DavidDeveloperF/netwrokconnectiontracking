@@ -8,40 +8,45 @@ import 'package:intl/intl.dart';                    // date formats
 // core data               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 String currentUser   = "dummy userId";            // user id
 String currentName   = "dummy user name";         // user's display name
-String currentDeviceId = "dummy deviceId";          // device id
+String currentDeviceId = "dummy deviceId";        // device id
+String currentDeviceDetails = "device ???";       // device id
+String currentRegion = "n/a";                     // if applicable
 double currentLat    = 0.28;                      // lat
 double currentLng    = -0.47;                     // long
-String currentRegion = "n/a";                     // if applicable
+String currentLocationText = "unknown location";
+
+// date formats for logging and display            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+final String  appDateFmt      = "EEE dd-MMM-yy HH:mm";
+final String  appDateFmtShort = "EEE HH:mm";
+const int longFutureDate = 9000111222333;   // used to create descending date keys
+
 
 // internet speeds           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-double currentDownloadSpeed = 0.0;
-double currentUploadSpeed   = 0.0;
+double currentDownloadSpeed = 3.14159;
+double currentUploadSpeed   = 3.14159;
 String downloadProgress = '0';
 String uploadProgress = '0';
 String currentSpeedUnits = " Mbps";
 
-int longFutureDate = 9000111222333;           // used to get descending date keys
-
-bool isFirebaseDBUsed = false;                // don't try to use db if not implemented
+// Firebase ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+bool isFirebaseDBUsed = false;         // don't try to use db if not implemented
 
 
 // build and package data  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-String appName = "Network";
-String appVersion = "??";
-String appPackageName;
-String appBuildNumber;
+String appName        = "Network Connection Tracker";
+String appVersion     = "??";
+String appPackageName = "package name";
+String appBuildNumber = "package build number";
+
 // debug logging            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-String whereAmI = "not set";
+String whereAmI       = "debug location not set";
 final bool printDebugMessage    = true;
 final bool logDebugMessage      = false;
-
-
-// debug logging            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-final String  appDateFmt      = "EEE dd-MMM-yy HH:mm";
-final String  appDateFmtShort = "EEE HH:mm";
+String liveOrTest = "";                     // append to AppBar title "" or "Test"
 
 
 
+// #############################################################################  Core functions
 
 // #############################################################################
 // # getAgeInMinAsString(double _minutes)

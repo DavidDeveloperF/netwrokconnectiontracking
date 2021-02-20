@@ -110,8 +110,7 @@ void getVersionNumber() async {
   appPackageName = packageInfo.packageName;
   myDebugPrint(" App Name: " + appName +
       " Version: "  + appVersion +
-      " Build: "    + appBuildNumber +
-      " Package:"   + appPackageName
+      " Build: "    + appBuildNumber
       ,  "getVersionNumber", false);
 }
 
@@ -122,24 +121,12 @@ void getVersionNumber() async {
 // #############################################################################
 void futureCheckPlatform() {
   String whereAmI = "futureCheckPlatform";
-  // myDebugPrint('STARTED, before the THEN statement. ${getLongDateString(DateTime.now())}',
-  //       whereAmI, false);
-  // not sure what the 'then' variable is for
-  //     is it just here to test if the function has returned 'value' ?
   var then = _checkPlatform().then((value) => {
-    //                                      not sure why it needs .toString
-    // Below code is a setState example from the main.dart shell
-//    setState(() {
-//      platformInfo = value.toString();
-//      debugPrint('** $whereAmI >>  $platformInfo');
-//    }), // end setState
   }); // end of .then
-} // end of futurePerms
+} //                                                                      end of futureCheckPlatform
 
 Future<String> _checkPlatform() async {
   String whereAmI = "_checkPlatform";
-//    TODO: this won't work with iOS. What's wrong with Platform class?
-//Platform.i
 
   if (Platform.isAndroid) {
     var androidInfo = await DeviceInfoPlugin().androidInfo;
@@ -148,8 +135,9 @@ Future<String> _checkPlatform() async {
     var manufacturer = androidInfo.manufacturer;
     var model = androidInfo.model;
     var id = androidInfo.androidId;
-        currentDeviceId = id;
-    myDebugPrint('Android $release (SDK $sdkInt), $manufacturer $model $currentDeviceId'
+    currentDeviceId = id;
+    currentDeviceDetails = 'Android $release (SDK $sdkInt), $manufacturer $model';
+    myDebugPrint(currentDeviceDetails + " / " + currentDeviceId
         ,whereAmI+"Android", false);
     return 'Android $release (SDK $sdkInt), $manufacturer $model, device id: $id';
     // Android 9 (SDK 28), Xiaomi Redmi Note 7
@@ -163,7 +151,8 @@ Future<String> _checkPlatform() async {
     var id = iosInfo.utsname
         .toString(); // unsure what's iOS equivalent of device id
     currentDeviceId = id;
-    myDebugPrint('iOS $systemName $version, $name $model, device id: $id'
+    currentDeviceDetails = 'iOS $systemName $version, $name $model ';
+    myDebugPrint(currentDeviceDetails + " / " + currentDeviceId
         ,whereAmI+"iOS", false);
     // debugPrint(
     //     '** $_localModule $systemName $version, $name $model, device id: $id');

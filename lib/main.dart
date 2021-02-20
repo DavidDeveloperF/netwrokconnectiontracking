@@ -1,5 +1,6 @@
 // core / external packages
 import 'package:flutter/material.dart';
+import 'package:networkconnectiontracking/network/network_class.dart';
 // app
 import 'package:networkconnectiontracking/network/network_menu.dart';
 import 'package:networkconnectiontracking/network/pollnetwork.dart';
@@ -46,6 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    connectionValuesList = [];    // initialise connectionValuesList
     getVersionNumber();         // get app version/build
     futureCheckPlatform();      // get device info
   }
@@ -97,10 +99,34 @@ class _MyHomePageState extends State<MyHomePage> {
             RaisedButton(                                                     // get network FUNCTION
               child: Text("Run network function"),
               color: Colors.green,
-              onPressed: () => getNetworkFunction(),
-            ),
-            RaisedButton(                                                     // get Sensor FUNCTION
-              child: Text("Run Sensors function"),
+              onPressed: () async {
+                debugPrint("ABOUT TO RUN getNetworkFunction ~~~~~~~~~~~~~~~~~~~~~~~");
+                getNetworkFunction();
+                debugPrint("after RUNNING getNetworkFunction ~~~~~~~~~~~~~~~~~~~~~~~");
+                if (workingConnectionValues != null) {
+                  debugPrint("INSIDE  workingConnectionValues != NULL ~~~~~~~~~~~~~~~");
+                  connectionValuesList.add(workingConnectionValues);
+                  Navigator.push(context,
+                      MaterialPageRoute(
+                          builder: (context) => MyNetworkConnectionDetail()));
+                }
+              },
+                ),
+            RaisedButton(                                                     // get network FUNCTION
+              child: Text("Run network menu"),
+              color: Colors.yellowAccent,
+              onPressed: () async {
+                if (workingConnectionValues != null) {
+                  debugPrint("INSIDE  workingConnectionValues != NULL ~~~~~~~~~~~~~~~");
+                  connectionValuesList.add(workingConnectionValues);
+                  Navigator.push(context,
+                      MaterialPageRoute(
+                          builder: (context) => MyNetworkConnectionDetail()));
+                } //end of IF
+              }, // end of onPressed
+                ),
+                RaisedButton(                                                     // get Sensor FUNCTION
+                child: Text("Run Sensors function"),
               color: Colors.green,
               onPressed: () => getSensorInfo(),
             ),
