@@ -14,13 +14,31 @@ More work
     todo:   Maps and get map API code
     todo: Can I fix this? >> Plugin project :location_web not found. Please update settings.gradle.
 
+
+Ver 1.0.1+2
+============
+    Loads of errors reported, so time for
+        Flutter Clean
+        exit SDK
+        restart & start new VMD emulator
+    let's test on a Pixel 3 this time... [Loads of problems with Pixel 4]
+        Pixel 3 showing wrong time of day 31:35 is has 06:17 ???
+        tried changing location to Sheen Gate
+        this is Android 10, so lots more logging - see EXCEL
+
+Bugs:   look like the detail display is only looking at workingCV and that alwys has default values
+    - check swipe left/right    - LOOKS OK ??
+        added to temp debug code to update location and see what displays
+        todo: still getting obscure error on SIM card permission
+going to Commit anyway.... (just in case - laptop has no batttery fitted tonight)
+
 Ver 1.0.1+1
 ============
 
 OK - did the stpes below and about to save/commit BEFORE I actually try running the firebase stuff
 todo:  Android 8.0 - so the Nexus 5x - asked for permission to phone and permission for location    GOOD
 todo:  on Nexus seems liek the Netwrok widget works
-todo:  on Nexus the NetwoirkDetsil is NOT working - seems ot only be displaying default values
+todo:  on Nexus the NetworkDetails is NOT working - seems to only be displaying default values
 
 FIREBASE --- FIREBASE ---FIREBASE --- FIREBASE ---FIREBASE --- FIREBASE ---FIREBASE --- FIREBASE ---FIREBASE --- FIREBASE ---
 

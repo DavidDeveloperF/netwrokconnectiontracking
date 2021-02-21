@@ -507,9 +507,11 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
 
       // if user wants to abandon changes, then we turn off Changed, ('Yes' above)
       if (!workingConnectionValuesChanged) {
+        workingConnectionValues.locationText = "value set BEFORE setState";
         setState(() {
           workingConnectionValuesIndex = workingConnectionValuesIndex - 1;
           workingConnectionValues = connectionValuesList[workingConnectionValuesIndex];
+          workingConnectionValues.locationText = "value set INSIDE setState";
         });
       } // Do nothing if workoutchanged
     }
@@ -553,9 +555,11 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
 
       // if user wants to abandon changes, then we turn off Changed, ('Yes' above)
       if (!workingConnectionValuesChanged) {
+        workingConnectionValues.locationText = "value set BEFORE setState";
         setState(() {
           workingConnectionValuesIndex = workingConnectionValuesIndex + 1;
           workingConnectionValues = connectionValuesList[workingConnectionValuesIndex];
+          workingConnectionValues.locationText = "value set INSIDE setState";
         });
       } // Do nothing if workoutchanged
     }
