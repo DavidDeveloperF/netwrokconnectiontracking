@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Network Connections Tracker'),
     );
   }
 }
@@ -64,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text(currentDeviceDetails),
             Text(
               'You have pushed the + button this many times:',
             ),
@@ -72,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headline4,
             ),
             RaisedButton(                                                     // get network display
-              child: Text("Run network widget"),
+              child: Text("Test Menu"),
               color: Colors.blueAccent,
               onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => MyTestMenu())),

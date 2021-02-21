@@ -21,29 +21,34 @@ class _MyTestMenuState extends State<MyTestMenu> {
       child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text("Refreshed: " + getLongDateString(DateTime.now())
-          ),
-           Divider(),
-           RaisedButton(                                                     // get network display
+          Text("Refreshed: " + getLongDateString(DateTime.now())  ),
+          Divider(),
+          RaisedButton(                                                     // get network display
             child: Text("Run network widget"),
             color: Colors.blueAccent,
             onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => DisplayNetworkStuff())),
-          ),
-          RaisedButton(                                                     // download speed
-            child: Text("Download speed (background)"),
-            color: Colors.red,
-            onPressed: (){
-              backgroundDownload();
-            },
-          ),
-          RaisedButton(                                                     // upload speed
-            child: Text("Upload speed (background)"),
-            color: Colors.red,
-            onPressed: (){
-              backgroundUpload();
-            },
-          ),
+          ), // network widget
+          Row(
+            children: [
+              Text("Speed tests: "),
+              RaisedButton(                                                     // download speed
+                child: Text("Download"),
+                color: Colors.red,
+                onPressed: (){
+                  backgroundDownload();
+                },
+              ), // Download (background)
+              Text("  "),
+              RaisedButton(                                                     // upload speed
+                child: Text("Upload)"),
+                color: Colors.red,
+                onPressed: (){
+                  backgroundUpload();
+                },
+              ),
+            ],
+          ), // upload (background)
           RaisedButton(                                                     // get network display
             child: Text("Run speed test"),
             color: Colors.blueAccent,
@@ -59,26 +64,25 @@ class _MyTestMenuState extends State<MyTestMenu> {
               debugPrint("after RUNNING getNetworkFunction ~~~~~~~~~~~~~~~~~~~~~~~");
               if (workingConnectionValues != null) {
                 debugPrint("INSIDE  workingConnectionValues != NULL ~~~~~~~~~~~~~~~");
-                connectionValuesList.add(workingConnectionValues);
+//                getNetworkFunction al;ready adds teh workingCV to connectionValuesList [ this was doubling up...]
+//                connectionValuesList.add(workingConnectionValues);
                 Navigator.push(context,
                     MaterialPageRoute(
                         builder: (context) => MyNetworkConnectionDetail()));
               }
             },
-          ),
+          ),  // run network function
           RaisedButton(                                                     // get network FUNCTION
-            child: Text("Run network menu"),
+            child: Text("MyNetworkConnectionDetail"),
             color: Colors.yellowAccent,
             onPressed: () async {
               if (workingConnectionValues != null) {
-                debugPrint("INSIDE  workingConnectionValues != NULL ~~~~~~~~~~~~~~~");
-                connectionValuesList.add(workingConnectionValues);
                 Navigator.push(context,
                     MaterialPageRoute(
                         builder: (context) => MyNetworkConnectionDetail()));
               } //end of IF
             }, // end of onPressed
-          ),
+          ), // display MyNetworkConnectionDetail
           RaisedButton(                                                     // get Sensor FUNCTION
             child: Text("Run Sensors function"),
             color: Colors.green,
@@ -87,8 +91,7 @@ class _MyTestMenuState extends State<MyTestMenu> {
         ],
       ),
     ),
-      )
-    );
+  );
   }
 }
 

@@ -74,25 +74,27 @@ TrackerSession defaultTrackerSession = TrackerSession  (
 // #############################################################################
 // Every [refreshRate] seconds, take another reading
 class ConnectionValues {
-    String     key;                             // value Key - date/time key
-    int        sequenceNo;                      // number of tests this session
-    int        dateTimeInt;                     // date time as integer
-    String     dateTimeText;                    // date time as string
-    double     lat;                             // lattitude
-    double     lng;                             // longitude
-    String     locationText;                    // where is it (maybe)
-    bool       isNetworkAvailable;              // might not have a connection
-    String     networkType;                     // networkType
-    bool       isWifiEnabled;                   // isWifiEnabled
-    String     wifiLinkSpeed;                   // wifiLinkSpeed
-    String     wifiSSID;                        // wifiSSID
-    String     carrier;                         // carrier - in case it changes during tracking
-    double    downloadSpeed;                   // downloadSpeed
-    double    uploadSpeed;                     // uploadSpeed
-    String     speedUnits;                      // Mbps or kbps
+  String     key;                             // value Key - date/time key
+  String     parentKey;                       // in this case, TrackerSession.key
+  int        sequenceNo;                      // number of tests this session
+  int        dateTimeInt;                     // date time as integer
+  String     dateTimeText;                    // date time as string
+  double     lat;                             // lattitude
+  double     lng;                             // longitude
+  String     locationText;                    // where is it (maybe)
+  bool       isNetworkAvailable;              // might not have a connection
+  String     networkType;                     // networkType
+  bool       isWifiEnabled;                   // isWifiEnabled
+  String     wifiLinkSpeed;                   // wifiLinkSpeed
+  String     wifiSSID;                        // wifiSSID
+  String     carrier;                         // carrier - in case it changes during tracking
+  double     downloadSpeed;                   // downloadSpeed
+  double     uploadSpeed;                     // uploadSpeed
+  String     speedUnits;                      // Mbps or kbps
 
   ConnectionValues ({
       this.key,
+      this.parentKey,
       this.sequenceNo,
       this.dateTimeInt,
       this.dateTimeText,
@@ -118,6 +120,7 @@ bool                  workingConnectionValuesChanged;   // has working been chan
 
 ConnectionValues defaultConnectionValues = ConnectionValues  (
   key:            "123456789000",
+  parentKey:      "123456789000",
   sequenceNo:     1,
   dateTimeInt:    123456677,
   dateTimeText:    "Thu 21-June 18:30",
@@ -140,7 +143,7 @@ ConnectionValues defaultConnectionValues = ConnectionValues  (
 class SensorInfo {
   String     vendor;                          // who made the sensor
   String     name;                            // What is the sensor
-  double     maximumRange;                    // what is the raneg of values
+  double     maximumRange;                    // what is the value range
   double     power;                           // not sure what it means by 'Power'
   int        version;                         //  version of sensor
   double     resolution;                      // smallest change in value (probably)

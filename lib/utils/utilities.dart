@@ -68,7 +68,7 @@ myDebugPrint(String _message, String _whereFrom, bool _isCritical) {
 // #    getDateKey - turns DateTime to long integer most recent=lowest number
 // #               - usually saved as a String as the item's key
 // #############################################################################
-int getDateKey(DateTime inputDate) {
+String getDateKey(DateTime inputDate) {
   int myDateKey;
 
   if (inputDate != null) {
@@ -76,7 +76,7 @@ int getDateKey(DateTime inputDate) {
   } else {
     myDateKey = longFutureDate - DateTime.now().millisecondsSinceEpoch;
   }
-  return myDateKey;
+  return myDateKey.toString();
 } // end of getDateKey
 
 // ############################################################################# translateDateKey

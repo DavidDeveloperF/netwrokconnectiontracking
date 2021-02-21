@@ -1,6 +1,7 @@
 // external
 import 'package:flutter/material.dart';
 import 'package:android_device_info/android_device_info.dart';
+import 'package:networkconnectiontracking/network/pollnetwork.dart';
 import 'package:swipe_gesture_recognizer/swipe_gesture_recognizer.dart';
 // app code
 import 'package:networkconnectiontracking/utils/utilities.dart';
@@ -317,13 +318,23 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
                     //    Row(children: <Widget>[ Text("speedUnits: " ) ,  Text(workingConnectionValues.speedUnits,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
 
                         RaisedButton(
+                          child: Text("Run again"),
+                          color: Colors.lightGreenAccent,
+                          onPressed: () {
+                            getNetworkFunction();
+                            setState(){
+                              myDebugPrint("Raised button - run again (launched getNetworkFunction)", whereAmI, false);
+                            }
+                          },
+                        ),
+                        RaisedButton(
                           child: Text("DELETE !"),
                           color: Colors.red,
                           onPressed: () {
                             deleteConnectionValuesFunction(
                                 context, workingConnectionValuesIndex);
                           },
-                        )
+                        ),
                       ],
                     ),
                   ),

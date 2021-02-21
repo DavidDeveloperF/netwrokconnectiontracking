@@ -2,137 +2,101 @@ import 'package:android_device_info/android_device_info.dart';
 import 'package:networkconnectiontracking/main_variables.dart';
 import 'package:networkconnectiontracking/utils/utilities.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 import 'network_class.dart';
-import 'network_menu.dart';
 
-//  Seems like this widget returns a scrollable column
-void getNetworkFunction(){
+// ############################################################################  getNetworkFunction
+// #
+// # getNetworkFunction
+// #
+// #  + check there is a Session or create one
+// #  + run the getAllData function
+// #############################################################################
+void getNetworkFunction() {
+  checkSessionAndConnection(); // set up session (if don't have one)
   getAllData(
-    true,     // display
-    true,     // battery
-    true,     // memory
-    true,     // network
-    true,     // NFC
-    true,     // Location
-    true,     // SIM
-  );              // getData is the async function to load the device info
+    true, // display
+    true, // battery
+    true, // memory
+    true, // network
+    true, // NFC
+    true, // Location
+    true, // SIM
+  ); // getData is the async function to load the device info
+}
 
+// ############################################################################# checkSessionAndConnection()
+// # checkSessionAndConnection
+// #
+// # Make sure we have a session
+// # if not, empty the session list and start a new session
+// #############################################################################
+void checkSessionAndConnection() {
+  // Temporary setup code                                                         newSession required
+  // make sure we have a Session, index and it's in the list
+  if (workingTrackerSessionIndex == null || trackerSessionList.isEmpty) {
+    workingTrackerSessionIndex = 0;
+    setUpNewSession();
+  }
+
+  // should never get here.................
+  if (workingConnectionValuesIndex == null) {
+    workingConnectionValuesIndex = 0;
+    workingConnectionValues = defaultConnectionValues;
+  }
+} //      end of setUpSessionAndConnection
+
+// ############################################################################# setUpNewSession
+// #############################################################################
+void setUpNewSession() {
+// todo: should set up a proper 'new' session function
+// set defaults
+  workingTrackerSession = defaultTrackerSession;
+// update key, dates, etc
+  workingTrackerSession.key = getDateKey(DateTime.now());
+  workingTrackerSession.dateTimeInt = DateTime.now().millisecondsSinceEpoch;
+  workingTrackerSession.dateTimeText = getLongDateString(DateTime.now());
+  // todo:  add in the other variables like user, etc
+  // add to list
+  trackerSessionList.add(workingTrackerSession);
+
+  // if this is a new session, then clear the connection list
+  connectionValuesList = [];
+  workingConnectionValuesIndex = 0;
+  workingConnectionValues = defaultConnectionValues;
+  workingConnectionValuesChanged = false;
 }
 
 // ############################################################################
 // # getAllData
-// # goes through the main info APIs and saves the result in data
+// # goes through selected info APIs and saves the result in data
+// #
+// # Expects to have a Session as parent
+// #
 // ############################################################################
 getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
-    bool getNFC,     bool getLocation, bool getSIM ) async {
-
-  bool showDebugDetails     = false;
+    bool getNFC, bool getLocation, bool getSIM) async {
+  bool showDebugDetails = false;
   String whereAmI = "getAllData";
   String whereAmIDetail;
-  var data = {};                                  // data is a generic variable
+  var data = {}; // data is a generic variable
 
-  workingConnectionValuesChanged = false;         // just setup a value
-  if (workingConnectionValuesIndex == null) {
-    workingConnectionValuesIndex =0;
-    if (workingTrackerSessionIndex == null) {
-      workingTrackerSessionIndex =0;
-      workingTrackerSession = defaultTrackerSession;}}
+  workingConnectionValuesChanged = false;
 
-  // # final XXXXXX = await AndoridDeviceInfo().getXXXXX();               todo: why is this 'final'
+  // # final XXXXXX = await AndroidDeviceInfo().getXXXXX();               todo: find out why is this 'final'
   // #       appears to return a Map with all the values for Key + Value
   // # Eg:   Future<Map<dynamic, dynamic>> getMemoryInfo({String unit = "bytes"}) async {
   // #
   // # so I can XXXXXX.ForEach to loop through them
 
-  if(getDisplay){  try {
-    whereAmIDetail = whereAmI + " display";
-    final display = await AndroidDeviceInfo().getDisplayInfo();                // display data
-    if (showDebugDetails){                                                    // don't always want debug detail
-    display.forEach((key, value) {
-      myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });}
-    data.addAll(display);
-  } catch (e) {
-    myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-  }}                                                                          // end of getDisplay
-
-  if(getBattery) {try {
-    whereAmIDetail = whereAmI + " battery";
-    final battery = await AndroidDeviceInfo().getBatteryInfo();                // battery data
-    if (showDebugDetails){                                                    // don't always want debug detail
-    battery.forEach((key, value) {
-      myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });}
-    data.addAll(battery);
-  } catch (e) {
-    myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-  }}                                                                          // end of getBattery
-
-  if(getMemory) {try {
-    whereAmIDetail = whereAmI + " memory";
-    final memory = await AndroidDeviceInfo().getMemoryInfo();                 // memory data
-    if (showDebugDetails){                                                    // don't always want debug detail
-      memory.forEach((key, value) {
-      myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });}
-    data.addAll(memory);
-  } catch (e) {
-    myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-  }}                                                                          // end of getMemory
-
-  if(getNetwork) {try {
-    whereAmIDetail = whereAmI + " network";
-    final network = await AndroidDeviceInfo().getNetworkInfo();                // Network data
-    if (showDebugDetails){                                                    // don't always want debug detail
-      network.forEach((key, value) {
-      myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });}
-    data.addAll(network);
-  } catch (e) {
-    myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-  }}                                                                          // end of getNetwork
-
-  if(getNFC) {try {
-    whereAmIDetail = whereAmI + " nfc";
-    final nfc = await AndroidDeviceInfo().getNfcInfo();                        // NFC data
-    if (showDebugDetails){                                                    // don't always want debug detail
-        nfc.forEach((key, value) {
-        myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-      });}
-    data.addAll(nfc);
-      } catch (e) {
-        myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-      }} // end of getNFC
-
-  if(getLocation) {try {                            // TODO this does not seem to be working???
-    whereAmIDetail = whereAmI + " location";
-    final location = await AndroidDeviceInfo().getLocationInfo();                // location data
-    if (showDebugDetails){                                                    // don't always want debug detail
-      location.forEach((key, value) {
-        myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-      });}
-    data.addAll(location);
-      } catch (e) {
-          myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-      }}  // end of getLocation
-
-  // maybe working - not sure
-  // todo: follow up obscure errors depending on the device / android version
-  if (getSIM) {try {
-    whereAmIDetail = whereAmI + " sim";
-    var sim = await AndroidDeviceInfo().getSimInfo();                         // SIM data
-    sim.forEach((key, value) {
-      myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-    });
-    data.addAll(sim);
-  } catch (e) {
-    myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-  }}                              // end of getSIM
-
-
-  // Part of the original code...............
-  // this appears to be checking whether user has given access to permission     PHONE
+  // if xx try
+  //    xx = await AndroidDeviceInfo().getXX
+  //         if showDebugDetails
+  //            loop thorugh resutls & print
+  //    add xx to data
+  // catch errors
+// ??????????????? Why was this code put AFTER the getSinInfo ? Surely it should be run BEFORE ??
+// Part of the original code...............
+// this appears to be checking whether user has given access to permission        PHONE permissions ?
   var permission =
   await PermissionHandler().checkPermissionStatus(PermissionGroup.phone);
   if (permission == PermissionStatus.denied) {
@@ -147,55 +111,182 @@ getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
 
   // my clone of the above
   // this appears to be checking whether user has given access to permission     LOCATION (always)
-  var permissionLoc =
-  await PermissionHandler().checkPermissionStatus(PermissionGroup.locationAlways);
+  var permissionLoc = await PermissionHandler()
+      .checkPermissionStatus(PermissionGroup.locationAlways);
   if (permissionLoc == PermissionStatus.denied) {
     //                                         if no permission, request permission
-    var permissionsLoc =
-    await PermissionHandler().requestPermissions([PermissionGroup.locationAlways]);
-    if (permissionsLoc[PermissionGroup.locationAlways] == PermissionStatus.granted) {
+    var permissionsLoc = await PermissionHandler()
+        .requestPermissions([PermissionGroup.locationAlways]);
+    if (permissionsLoc[PermissionGroup.locationAlways] ==
+        PermissionStatus.granted) {
       var location = await AndroidDeviceInfo().getLocationInfo();
       data.addAll(location);
-    }     // end of GRANTED
-  }     // end of DENIED
+    } // end of GRANTED
+  } // end of DENIED
+
+  if (getDisplay) {
+    try {
+      whereAmIDetail = whereAmI + " display";
+      final display =
+          await AndroidDeviceInfo().getDisplayInfo(); // display data
+      if (showDebugDetails) {
+        // don't always want debug detail
+        display.forEach((key, value) {
+          myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
+        });
+      }
+      data.addAll(display);
+    } catch (e) {
+      myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
+    }
+  } // end of getDisplay
+
+  if (getBattery) {
+    try {
+      whereAmIDetail = whereAmI + " battery";
+      final battery =
+          await AndroidDeviceInfo().getBatteryInfo(); // battery data
+      if (showDebugDetails) {
+        // don't always want debug detail
+        battery.forEach((key, value) {
+          myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
+        });
+      }
+      data.addAll(battery);
+    } catch (e) {
+      myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
+    }
+  } // end of getBattery
+
+  if (getMemory) {
+    try {
+      whereAmIDetail = whereAmI + " memory";
+      final memory = await AndroidDeviceInfo().getMemoryInfo(); // memory data
+      if (showDebugDetails) {
+        // don't always want debug detail
+        memory.forEach((key, value) {
+          myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
+        });
+      }
+      data.addAll(memory);
+    } catch (e) {
+      myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
+    }
+  } // end of getMemory
+
+  if (getNetwork) {
+    try {
+      whereAmIDetail = whereAmI + " network";
+      final network =
+          await AndroidDeviceInfo().getNetworkInfo(); // Network data
+      if (showDebugDetails) {
+        // don't always want debug detail
+        network.forEach((key, value) {
+          myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
+        });
+      }
+      data.addAll(network);
+    } catch (e) {
+      myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
+    }
+  } // end of getNetwork
+
+  if (getNFC) {
+    try {
+      whereAmIDetail = whereAmI + " nfc";
+      final nfc = await AndroidDeviceInfo().getNfcInfo(); // NFC data
+      if (showDebugDetails) {
+        // don't always want debug detail
+        nfc.forEach((key, value) {
+          myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
+        });
+      }
+      data.addAll(nfc);
+    } catch (e) {
+      myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
+    }
+  } // end of getNFC
+
+  if (getLocation) {
+    try {
+      // TODO this does not seem to be working???
+      whereAmIDetail = whereAmI + " location";
+      final location =
+          await AndroidDeviceInfo().getLocationInfo(); // location data
+      if (showDebugDetails) {
+        // don't always want debug detail
+        location.forEach((key, value) {
+          myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
+        });
+      }
+      data.addAll(location);
+    } catch (e) {
+      myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
+    }
+  } // end of getLocation
+
+  // maybe working - not sure
+  // todo: follow up obscure errors depending on the device / android version
+  if (getSIM) {
+    try {
+      whereAmIDetail = whereAmI + " sim";
+      var sim = await AndroidDeviceInfo().getSimInfo(); // SIM data
+      sim.forEach((key, value) {
+        myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
+      });
+      data.addAll(sim);
+    } catch (e) {
+      myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
+    }
+  } // end of getSIM
+
 
 
   // in case any of the preceding data are missing, load default values first
   workingConnectionValues = defaultConnectionValues;
+  String dummyLocationText = "??";
+  if (currentLat == 0.0)
 
-  workingConnectionValues = ConnectionValues  (
-    key:                getDateKey(DateTime.now()).toString(),
-    sequenceNo:         workingConnectionValuesIndex,
-    dateTimeInt:        DateTime.now().millisecondsSinceEpoch,
-    dateTimeText:       getLongDateString(DateTime.now()),
-    lat:                currentLat,
-    lng:                currentLng,
-    locationText:       currentLocationText,
+  workingConnectionValues = ConnectionValues(
+    key:              getDateKey(DateTime.now()).toString(),
+    parentKey:        workingTrackerSession.key,
+    sequenceNo:       workingConnectionValuesIndex,
+    dateTimeInt:      DateTime.now().millisecondsSinceEpoch,
+    dateTimeText:     getLongDateString(DateTime.now()),
+    lat:              currentLat,
+    lng:              currentLng,
+    locationText:     currentLocationText,
     isNetworkAvailable: data['isNetworkAvailable'],
-    networkType:        data['networkType'],
-    isWifiEnabled:      data['isWifiEnabled'],
-    wifiLinkSpeed:      data['wifiLinkSpeed'],
-    wifiSSID:           data['wifiSSID'],
-    carrier:            data['carrier'],
-    downloadSpeed:      data['downloadSpeed'],
-    uploadSpeed:        data['uploadSpeed'],
-    speedUnits:         "Mbps",
+    networkType:      data['networkType'],
+    isWifiEnabled:    data['isWifiEnabled'],
+    wifiLinkSpeed:    data['wifiLinkSpeed'],
+    wifiSSID:         data['wifiSSID'],
+    carrier:          data['carrier'],
+    downloadSpeed:    data['downloadSpeed'],       // can't get speed from above
+    uploadSpeed:      data['uploadSpeed'],         // can't get speed from above
+    speedUnits:       "Mbps",
   );
 
   if (workingConnectionValuesIndex != null) {
     connectionValuesList.add(workingConnectionValues);
-    workingConnectionValuesIndex = workingConnectionValuesIndex+1;
+    workingConnectionValuesIndex = workingConnectionValuesIndex + 1;
   }
 
-  myDebugPrint("workingConnectionValues = " +
-      workingConnectionValues.key + " / " +
-      workingConnectionValues.sequenceNo.toString() + " / " +
-      workingConnectionValues.dateTimeText + " / " +
-      " Date key is: "+ getLongDateString(translateDateKey(workingConnectionValues.key))
-      , whereAmI, false );
-
-}   // end of getData
-
+  myDebugPrint(
+      "workingConnectionValues = " +
+          workingConnectionValues.key +
+          " / ParentKey: " +
+          workingTrackerSession.key +
+          " / " +
+          workingConnectionValues.sequenceNo.toString() +
+          " / " +
+          workingConnectionValues.dateTimeText +
+          " / " +
+          " Date key is: " +
+          getLongDateString(translateDateKey(workingConnectionValues.key)),
+      whereAmI,
+      false);
+} // end of getData  ########################################################## // end of getData
 
 
 // ############################################################################# getSensorInfo
@@ -215,23 +306,23 @@ void getSensorInfo() async {
   String whereAmI = "getSensorInfo";
 
   try {
-    final sensorInfo = await AndroidDeviceInfo().getSensorInfo();                // Sensor data
+    final sensorInfo = await AndroidDeviceInfo().getSensorInfo(); // Sensor data
     int _counter = 0;
     sensorInfo.forEach((element) {
       // myDebugPrint("sensorInfo Counter: $_counter  Element: " + element.toString()
       //     ,  whereAmI, false);
       workingSensorInfo = SensorInfo(
-        name:         element['name'],
-        vendor:       element['vendor'],
-        version:      element['version'],
-        power:        element['power'],
+        name: element['name'],
+        vendor: element['vendor'],
+        version: element['version'],
+        power: element['power'],
         maximumRange: element['maximumRange'],
-        resolution:   element['resolution'],
+        resolution: element['resolution'],
       );
-      myDebugPrint("sensor present: " + workingSensorInfo.name
-          ,  whereAmI, false);
+      myDebugPrint(
+          "sensor present: " + workingSensorInfo.name, whereAmI, false);
 
-      _counter = _counter +1;
+      _counter = _counter + 1;
     });
   } catch (e) {
     myDebugPrint("## ERROR ## The exception thrown is $e", whereAmI, true);

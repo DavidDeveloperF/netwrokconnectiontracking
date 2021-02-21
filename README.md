@@ -14,9 +14,87 @@ More work
     todo:   Maps and get map API code
     todo: Can I fix this? >> Plugin project :location_web not found. Please update settings.gradle.
 
-version: 1.0.1+0
-===============
-1) tidy up getNetwork
+Ver 1.0.1+1
+============
+
+OK - did the stpes below and about to save/commit BEFORE I actually try running the firebase stuff
+todo:  Android 8.0 - so the Nexus 5x - asked for permission to phone and permission for location    GOOD
+todo:  on Nexus seems liek the Netwrok widget works
+todo:  on Nexus the NetwoirkDetsil is NOT working - seems ot only be displaying default values
+
+FIREBASE --- FIREBASE ---FIREBASE --- FIREBASE ---FIREBASE --- FIREBASE ---FIREBASE --- FIREBASE ---FIREBASE --- FIREBASE ---
+
+Add firebase db - I want two main components
+    * Authentication        [Note the Firebase helper only works for Android, not flutter]
+    * Realtime Database           'cannot find the android application module... '
+
+todo:   I need to check my notes to see how I did it before in Flutter
+
+i)  create new db on firebase console
+ii) turn on authentication (i'm only using email+password)
+ii) create realtiem db - location Europe (Belgium)
+iv) add app to db permissions
+    ap name is from android/app/build.grade
+    com.frewconsulting.networkconnectiontracking
+v)  download google-service.json
+    store same place as build.gradle
+        android/app/build.grade
+    make sure it's correctly named - download is likely to append ' (6)' or similar
+vi) make sure flutter packages in pubspec.yaml
+      firebase_core: ^0.4.4+3           # I have this in flutter_map
+      firebase_auth: ^0.16.0            # Firebase authentication (user login)
+      firebase_dynamic_links: ^0.5.1    # 0.22c also part of the sample code for signin
+      firebase_database: ^3.1.6         # realtime database
+vii) Google instructions says to update SDK as follows:
+    The Google services plugin for Gradle loads the google-services.json file you just downloaded. Modify your build.gradle files to use the plugin.
+
+  a Project-level build.gradle (<project>/build.gradle):
+
+    buildscript {
+      repositories {
+        // Check that you have the following line (if not, add it):
+        google()  // Google's Maven repository                          <<< already present
+      }
+      dependencies {
+        ...
+        // Add this line
+        classpath 'com.google.gms:google-services:4.3.5'                <<< added this
+      }
+    }
+
+  b allprojects {
+      ...
+      repositories {
+        // Check that you have the following line (if not, add it):
+        google()  // Google's Maven repository
+        ...
+      }
+    }
+    App-level build.gradle (<project>/<app-module>/build.gradle):
+
+
+   c apply plugin: 'com.android.application'
+    // Add this line
+    apply plugin: 'com.google.gms.google-services'                      <<< added this
+    dependencies {
+      // Import the Firebase BoM
+      implementation platform('com.google.firebase:firebase-bom:26.5.0')
+
+      // Add the dependencies for the desired Firebase products
+      // https://firebase.google.com/docs/android/setup#available-libraries
+    }
+    By using the Firebase Android BoM, your app will always use compatible Firebase library versions. Learn more
+    Finally, press "Sync now" in the bar that appears in the IDE:
+
+
+Ver 1.0.1+0
+============
+Tidy up some of the code - move most of the test buttons out of 'main' into test_menu.dart
+Tidy up default Tracking and Connection values
+tidy up debugging in network_menu.dart
+put a flag on debugging & make sure session and connection exist in pollnetwork.dart
+*New session_menu.dart
+added in workmanager (batch scheduling) to pubspec.yaml
 
 Version 1.0.0+4
 ===============
