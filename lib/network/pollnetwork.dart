@@ -79,8 +79,8 @@ void setUpNewSession() {
 // ############################################################################
 getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
     bool getNFC, bool getLocation, bool getSIM) async {
-  bool showDebugDetails = true;                                    //  use this to show/suppress kogging
-  String _locationText;
+  bool showDebugDetails = false;                                    //  use this to show/suppress logging
+  //String _locationText;
   String whereAmI = "getAllData";
   String whereAmIDetail;
   var data = {}; // data is a generic variable
@@ -137,7 +137,7 @@ getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
 
   if (getLocation) {
     try {
-      // TODO this does not seem to be working???
+      // DONE this IS NOW seem to be working [but AndroidDeviceInfo().getLocationInfo() DOES NOT WORK]
       whereAmIDetail = whereAmI + " location";
       refreshLocation();                                                  // alt code taken from WATD
     } catch (e) {
@@ -145,7 +145,22 @@ getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
     }
   } // end of getLocation
 
-
+  if (getNetwork) {
+    try {
+      whereAmIDetail = whereAmI + " network";
+      final network =
+      await AndroidDeviceInfo().getNetworkInfo(); // Network data
+      if (showDebugDetails) {
+        // don't always want debug detail
+        network.forEach((key, value) {
+          myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
+        });
+      }
+      data.addAll(network);
+    } catch (e) {
+      myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
+    }
+  } // end of getNetwork
 
   if (getDisplay) {
     try {
@@ -199,22 +214,6 @@ getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
     }
   } // end of getMemory
 
-  if (getNetwork) {
-    try {
-      whereAmIDetail = whereAmI + " network";
-      final network =
-          await AndroidDeviceInfo().getNetworkInfo(); // Network data
-      if (showDebugDetails) {
-        // don't always want debug detail
-        network.forEach((key, value) {
-          myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-        });
-      }
-      data.addAll(network);
-    } catch (e) {
-      myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-    }
-  } // end of getNetwork
 
   if (getNFC) {
     try {

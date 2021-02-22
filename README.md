@@ -14,16 +14,48 @@ More work
     todo:   Maps and get map API code
     todo: Can I fix this? >> Plugin project :location_web not found. Please update settings.gradle.
 
+Ver 1.0.1+4  Commit local AND to Github
+===========
+
+Tried to test the app on Pixel 4 (API 30 = Android 11)
+    OK working reasonably well
+        Network only seems to return 2G, 3G, 4G
+
+    sort of working - oddly the emulator has the wrong date/time
+        can't get ti to open settings to investigate
+    Found the emulator has a 5G setting for network [tried this]
+        still returns Cellular 4G as the network type (as does my actual Pixel 5)
+        this is probably a limitation on the Android Device info ??
+    Emulator crashed
+        I/flutter (30900): about to test workingConnectionValuesIndex for null
+        I/flutter (30900): INSIDE connectionValuesList.add
+        I/flutter (30900): //Tue 02:50/networkconnectiontracking/1.0.1_3/getAllData/ workingConnectionValues = 7386095015446 / ParentKey: 7386095323831 / 5 / Tue 23-Feb-21 02:50 /  Date key is: Tue 23-Feb-21 02:50
+        I/flutter (30900): //Tue 02:50/networkconnectiontracking/1.0.1_3/_refreshLocation/ Received current location as >> Location: lat: 51.4563 / lng: -0.2648
+        I/flutter (30900): //Tue 02:50/networkconnectiontracking/1.0.1_3/_refreshLocation/ Floating Refresh pressed
+        I/nectiontrackin(30900): Thread[4,tid=30909,WaitingInMainSignalCatcherLoop,Thread*=0xe1280010,peer=0x12d82a90,"Signal Catcher"]: reacting to signal 3
+        I/nectiontrackin(30900):
+        I/nectiontrackin(30900): WaitForGcToComplete blocked ObjectsAllocated on None for 28.749ms
+        W/nectiontrackin(30900): Suspending all threads took: 7.719ms
+        I/nectiontrackin(30900): Wrote stack traces to tombstoned
+        E/nectiontrackin(30900): Invalid ID 0x00000001.
+        I/nectiontrackin(30900): Explicit concurrent copying GC freed 25619(1158KB) AllocSpace objects, 7(332KB) LOS objects, 49% free, 2517KB/5035KB, paused 4.099ms total 74.110ms
+        I/nectiontrackin(30900): oneway function results will be dropped but finished with status OK and parcel size 4
+        I/nectiontrackin(30900): Explicit concurrent copying GC freed 16828(718KB) AllocSpace objects, 5(100KB) LOS objects, 49% free, 2520KB/5041KB, paused 3.080ms total 94.903ms
+        F/crash_dump32(32529): crash_dump.cpp:474] failed to attach to thread 160: Permission denied
+        F/crash_dump32(32684): crash_dump.cpp:474] failed to attach to thread 160: Permission denied
 
 Ver 1.0.1+3  Commit local AND to Github
 ===========
-OK roughtly working now
+OK roughly working now
     refreshLocation taken from WATD and put in it's own polllocation.dart file
         Note: _getLocation function returns type LocationData, not type Location
     refresh called at start of getNetwork
         checks permission first - if no location permission, refreshLocation is turned off
         if permission granted, then will always check location
     not sure what's happening with SIM permissions - need to test on more devices
+ANSWER:  it's the latest Privacy features included from Android 10
+    https://developer.android.com/about/versions/10/privacy/changes#non-resettable-device-ids
+    todo~: there might be a way around this in the above documentation
 
 NEW - MyConnectionListMenu very simple list builder
     cloned from WATD release_menu
