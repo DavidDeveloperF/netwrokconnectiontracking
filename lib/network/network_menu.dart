@@ -10,6 +10,80 @@ import 'package:networkconnectiontracking/main_variables.dart';
 
 
 
+// ############################################################################  MyConnectionListMenu
+// #  MyConnectionListMenu very simple list builder
+// #  copied from release_menu.dart in WATD
+// ############################################################################
+class MyConnectionListMenu extends StatefulWidget {
+  @override
+  _ConnectionListMenuState createState() => _ConnectionListMenuState();
+}
+
+class _ConnectionListMenuState extends State<MyConnectionListMenu> {
+  @override
+  void initState() {
+    super.initState();
+    whereAmI = "MyConnectionListMenu";
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('ConnectionList ($appVersion)'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.backspace),
+            onPressed: () {
+              Navigator.pop(context); // Go back - comes from settings.
+//            Navigator.push(context,
+//              MaterialPageRoute(builder: (context) => SettingsTopMenu()));
+            }, // onPressed
+          )
+        ], //actions
+      ),
+      body: ListView.builder(
+          itemCount: connectionValuesList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+              child: ListTile(
+                onTap: () {
+                  workingConnectionValues = connectionValuesList[index];
+                  workingConnectionValuesIndex = index;
+                  if (workingConnectionValues.locationText == null ) {workingConnectionValues.locationText = "error: Location null value";}
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MyNetworkConnectionDetail()));
+                },
+                title: Text("(" +
+                    index.toString() +
+                    ") " +
+                    connectionValuesList[index].key),
+                subtitle: Text(connectionValuesList[index].networkType +
+                    " / " +
+                    connectionValuesList[index].dateTimeText),
+              ),
+            );
+          }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            myDebugPrint("Floating Refresh pressed", whereAmI, false);
+          });
+          // Navigator.push(context,
+          //     MaterialPageRoute(builder: (context) => DetailedChatThreadMenu()));
+        },
+        tooltip: 'Refresh',
+        child: Icon(Icons.refresh_sharp),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+
+
 //  Seems like this widget returns a scrollable column
 class NetworkTab extends StatefulWidget {
   @override
@@ -28,39 +102,40 @@ class _NetworkTabState extends State<NetworkTab> {
   }
 
   void _getNetwork() async {
-    String _whereAmI =   "_getNetwork";
+    String _whereAmI = "_getNetwork";
     try {
-        final network = await AndroidDeviceInfo().getNetworkInfo();
-        setState(() {
-          screenData.addAll(network);
-        });
-      } catch (e) {
-        myDebugPrint("The exception thrown is $e", _whereAmI, true);
-      }
-    } // end of getNetwork
-  void _getSIM() async {
-    String _whereAmI =   "_getSIM";
-    try {
-        final SIM = await AndroidDeviceInfo().getSimInfo();
-        setState(() {
-          screenData.addAll(SIM);
-        });
-      } catch (e) {
-        myDebugPrint("The exception thrown is $e", _whereAmI, true);
-      }
-    } // end of getNetwork
-  void _getNfc() async {
-    String _whereAmI =   "_getNFC";
-    try {
-        final Nfc = await AndroidDeviceInfo().getNfcInfo();
-        setState(() {
-          screenData.addAll(Nfc);
-        });
-      } catch (e) {
-        myDebugPrint("The exception thrown is $e", _whereAmI, true);
-      }
-    } // end of getNetwork
+      final network = await AndroidDeviceInfo().getNetworkInfo();
+      setState(() {
+        screenData.addAll(network);
+      });
+    } catch (e) {
+      myDebugPrint("The exception thrown is $e", _whereAmI, true);
+    }
+  } // end of getNetwork
 
+  void _getSIM() async {
+    String _whereAmI = "_getSIM";
+    try {
+      final SIM = await AndroidDeviceInfo().getSimInfo();
+      setState(() {
+        screenData.addAll(SIM);
+      });
+    } catch (e) {
+      myDebugPrint("The exception thrown is $e", _whereAmI, true);
+    }
+  } // end of getNetwork
+
+  void _getNfc() async {
+    String _whereAmI = "_getNFC";
+    try {
+      final Nfc = await AndroidDeviceInfo().getNfcInfo();
+      setState(() {
+        screenData.addAll(Nfc);
+      });
+    } catch (e) {
+      myDebugPrint("The exception thrown is $e", _whereAmI, true);
+    }
+  } // end of getNetwork
 
   @override
   Widget build(BuildContext context) {
@@ -73,35 +148,34 @@ class _NetworkTabState extends State<NetworkTab> {
       child: Column(
         children: <Widget>[
           Divider(),
-          RowItem('Network Available',  '${screenData['isNetworkAvailable']}'),
-          RowItem('Network',            '${screenData['networkType']}'),
-          RowItem('iPv4 Address',       '${screenData['iPv4Address']}'),
-          RowItem('iPv6 Address',       '${screenData['iPv6Address']}'),
-          RowItem('WiFi Enabled',       '${screenData['isWifiEnabled']}'),
-          RowItem('WiFi SSID',          '${screenData['wifiSSID']}'),
-          RowItem('WiFi BSSID',         '${screenData['wifiBSSID']}'),
-          RowItem('WiFi Speed',         '${screenData['wifiLinkSpeed']}'),
+          RowItem('Network Available', '${screenData['isNetworkAvailable']}'),
+          RowItem('Network', '${screenData['networkType']}'),
+          RowItem('iPv4 Address', '${screenData['iPv4Address']}'),
+          RowItem('iPv6 Address', '${screenData['iPv6Address']}'),
+          RowItem('WiFi Enabled', '${screenData['isWifiEnabled']}'),
+          RowItem('WiFi SSID', '${screenData['wifiSSID']}'),
+          RowItem('WiFi BSSID', '${screenData['wifiBSSID']}'),
+          RowItem('WiFi Speed', '${screenData['wifiLinkSpeed']}'),
           RowItem('Signal strength(Cellular)', '???'),
-          RowItem('WiFi MAC',           '${screenData['wifiMAC']}'),
+          RowItem('WiFi MAC', '${screenData['wifiMAC']}'),
           Divider(),
-          RowItem('NFC Present',        '${screenData['isNfcPresent']}'),
-          RowItem('NFC Enabled',        '${screenData['isNfcEnabled']}'),
+          RowItem('NFC Present', '${screenData['isNfcPresent']}'),
+          RowItem('NFC Enabled', '${screenData['isNfcEnabled']}'),
           Divider(),
-          RowItem('IMSI',               '${screenData['imsi']}'),
-          RowItem('Serial',             '${screenData['serial']}'),
-          RowItem('Country',            '${screenData['country']}'),
-          RowItem('Carrier',            '${screenData['carrier']}'),
-          RowItem('SIM Locked',         '${screenData['isSimNetworkLocked']}'),
+          RowItem('IMSI', '${screenData['imsi']}'),
+          RowItem('Serial', '${screenData['serial']}'),
+          RowItem('Country', '${screenData['country']}'),
+          RowItem('Carrier', '${screenData['carrier']}'),
+          RowItem('SIM Locked', '${screenData['isSimNetworkLocked']}'),
           RowItem('activeMultiSimInfo', '${screenData['activeMultiSimInfo']}'),
-          RowItem('Multi SIM',          '${screenData['isMultiSim']}'),
-          RowItem('Active SIM(s)',      '${screenData['numberOfActiveSim']}'),
+          RowItem('Multi SIM', '${screenData['isMultiSim']}'),
+          RowItem('Active SIM(s)', '${screenData['numberOfActiveSim']}'),
           Divider(),
         ],
       ),
     );
   }
 }
-
 
 // ###########################################################################   RowItem
 // # this was not part of the source code
@@ -122,14 +196,14 @@ Widget RowItem(String colTitle, String resultString) {
 // ############################################################################  MyNetworkConnectionDetail
 class MyNetworkConnectionDetail extends StatefulWidget {
   @override
-  _MyNetworkConnectionDetailState createState() => _MyNetworkConnectionDetailState();
+  _MyNetworkConnectionDetailState createState() =>
+      _MyNetworkConnectionDetailState();
 }
 
 class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
   String whereAmI = "_MyNetworkConnectionDetailState";
   bool isEditAllowed = true; // todo sort this out later
   TextEditingController locationTextEdit = new TextEditingController();
-
 
   // ############################################################################   _onWillPop
 // # onWillPop
@@ -143,10 +217,9 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
 //        child: Scaffold(
 // ############################################################################
   Future<bool> _onWillPop() async {
-
     if (workingConnectionValuesChanged == null) {
-      myDebugPrint("workingConnectionValuesChanged = null"
-        , whereAmI +"#onWillpop", false);
+      myDebugPrint("workingConnectionValuesChanged = null",
+          whereAmI + "#onWillpop", false);
       Navigator.of(context).pop(true);
       return false;
     } else {
@@ -155,23 +228,23 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
         return false;
       } else {
         return (await showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Exit without saving?'),
-            content: new Text(
-                'Are you sure you want to this item, without saving changes?'),
-            actions: <Widget>[
-              new FlatButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: new Text('No'),
+              context: context,
+              builder: (context) => new AlertDialog(
+                title: new Text('Exit without saving?'),
+                content: new Text(
+                    'Are you sure you want to this item, without saving changes?'),
+                actions: <Widget>[
+                  new FlatButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: new Text('No'),
+                  ),
+                  new FlatButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: new Text('Yes'),
+                  ),
+                ],
               ),
-              new FlatButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: new Text('Yes'),
-              ),
-            ],
-          ),
-        )) ??
+            )) ??
             false;
       }
     }
@@ -182,13 +255,13 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
     // TODO: implement initState
     super.initState();
     if (updateEditControllers()) {
-      myDebugPrint("?? debug InitState updateEditControllers"
-      ,whereAmI+"#initState", false );
+      myDebugPrint("?? debug InitState updateEditControllers",
+          whereAmI + "#initState", false);
     }
   }
 
   bool updateEditControllers() {
-    locationTextEdit.text  =  workingConnectionValues.locationText;
+    locationTextEdit.text = workingConnectionValues.locationText;
     return true;
   }
 
@@ -299,34 +372,136 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
                             ),
                           ],
                         ),
-  // below code copied from class spreadsheet - column M     
-                        Row(children: <Widget>[ Text("key: " ) ,  Text(workingConnectionValues.key,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                        Row(children: <Widget>[ Text("sequenceNo: " ) ,  Text(workingConnectionValues.sequenceNo.toString(),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                        Row(children: <Widget>[ Text("dateTimeInt: " ) ,  Text(workingConnectionValues.dateTimeInt.toString(),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                        Row(children: <Widget>[ Text("dateTimeText: " ) ,  Text(workingConnectionValues.dateTimeText,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                        Row(children: <Widget>[ Text("lat: " ) ,  Text(workingConnectionValues.lat.toStringAsFixed(4),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                        Row(children: <Widget>[ Text("lng: " ) ,  Text(workingConnectionValues.lng.toStringAsFixed(4),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                        Row(children: <Widget>[ Text("locationText: " ) ,  Text(workingConnectionValues.locationText,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                        Row(children: <Widget>[ Text("isNetworkAvailable: " ) ,  Text(workingConnectionValues.isNetworkAvailable.toString(),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                        Row(children: <Widget>[ Text("networkType: " ) ,  Text(workingConnectionValues.networkType,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                        Row(children: <Widget>[ Text("isWifiEnabled: " ) ,  Text(workingConnectionValues.isWifiEnabled.toString(),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                        Row(children: <Widget>[ Text("wifiLinkSpeed: " ) ,  Text(workingConnectionValues.wifiLinkSpeed,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                        Row(children: <Widget>[ Text("wifiSSID: " ) ,  Text(workingConnectionValues.wifiSSID,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                    //    Row(children: <Widget>[ Text("carrier: " ) ,  Text(workingConnectionValues.carrier,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                    //    Row(children: <Widget>[ Text("downloadSpeed: " ) ,  Text(workingConnectionValues.downloadSpeed.toStringAsFixed(4),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                    //    Row(children: <Widget>[ Text("uploadSpeed: " ) ,  Text(workingConnectionValues.uploadSpeed.toStringAsFixed(4),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
-                    //    Row(children: <Widget>[ Text("speedUnits: " ) ,  Text(workingConnectionValues.speedUnits,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        // below code copied from class spreadsheet - column M
+                        Row(children: <Widget>[
+                          Text("key: "),
+                          Text(
+                            workingConnectionValues.key,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
+                        Row(children: <Widget>[
+                          Text("sequenceNo: "),
+                          Text(
+                            workingConnectionValues.sequenceNo.toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
+                        Row(children: <Widget>[
+                          Text("dateTimeInt: "),
+                          Text(
+                            workingConnectionValues.dateTimeInt.toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
+                        Row(children: <Widget>[
+                          Text("dateTimeText: "),
+                          Text(
+                            workingConnectionValues.dateTimeText,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
+                        Row(children: <Widget>[
+                          Text("lat: "),
+                          Text(
+                            workingConnectionValues.lat.toStringAsFixed(4),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
+                        Row(children: <Widget>[
+                          Text("lng: "),
+                          Text(
+                            workingConnectionValues.lng.toStringAsFixed(4),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
+                        Row(children: <Widget>[
+                          Text("locationText: "),
+                          Text(
+                            workingConnectionValues.locationText,
+                            style: TextStyle(color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
+                        Row(children: <Widget>[
+                          Text("isNetworkAvailable: "),
+                          Text(
+                            workingConnectionValues.isNetworkAvailable
+                                .toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
+                        Row(children: <Widget>[
+                          Text("networkType: "),
+                          Text(
+                            workingConnectionValues.networkType,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
+                        Row(children: <Widget>[
+                          Text("isWifiEnabled: "),
+                          Text(
+                            workingConnectionValues.isWifiEnabled.toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
+                        Row(children: <Widget>[
+                          Text("wifiLinkSpeed: "),
+                          Text(
+                            workingConnectionValues.wifiLinkSpeed,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
+                        Row(children: <Widget>[
+                          Text("wifiSSID: "),
+                          Text(
+                            workingConnectionValues.wifiSSID,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
+                        //    Row(children: <Widget>[ Text("carrier: " ) ,  Text(workingConnectionValues.carrier,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        //    Row(children: <Widget>[ Text("downloadSpeed: " ) ,  Text(workingConnectionValues.downloadSpeed.toStringAsFixed(4),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        //    Row(children: <Widget>[ Text("uploadSpeed: " ) ,  Text(workingConnectionValues.uploadSpeed.toStringAsFixed(4),     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
+                        //    Row(children: <Widget>[ Text("speedUnits: " ) ,  Text(workingConnectionValues.speedUnits,     style: TextStyle(       fontWeight: FontWeight.bold,    ),  ),]),
 
                         RaisedButton(
                           child: Text("Run again"),
                           color: Colors.lightGreenAccent,
                           onPressed: () {
                             getNetworkFunction();
-                            setState(){
-                              myDebugPrint("Raised button - run again (launched getNetworkFunction)", whereAmI, false);
-                            }
-                          },
+// todo: don't really understand why the setState is greyed out???
+                            setState() {
+                              myDebugPrint(
+                                  "Raised button - run again (after launch getNetworkFunction)",
+                                  whereAmI,
+                                  false);
+                            }  // end of setState
+                          },  // end onPressed
                         ),
+                        
                         RaisedButton(
                           child: Text("DELETE !"),
                           color: Colors.red,
@@ -377,8 +552,7 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
     whereAmI = "deleteConnectionValuesFunction";
 
 //    bool sure = false;
-    myDebugPrint("index $index about to showDialog"
-      , whereAmI, false);
+    myDebugPrint("DELETE index $index about to showDialog", whereAmI, false);
 
 // todo   REINSTATE review the delete authorisation
     // if (isEditAllowed) {
@@ -390,35 +564,41 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
     //     deletePromptText = "Are you sure you want to delete your item?";
     //   }
     // }
-    deletePromptText =
-        deletePromptText + "\nItem: " 
-            + connectionValuesList[index].lat.toStringAsFixed(4) +
-            " / "
-            + connectionValuesList[index].lat.toStringAsFixed(4);
+    deletePromptText = deletePromptText +
+        "\nItem: " +
+        connectionValuesList[index].lat.toStringAsFixed(4) +
+        " / " +
+        connectionValuesList[index].lat.toStringAsFixed(4);
 
     showDialog(
         context: context,
         builder: (_) => new AlertDialog(
-          title: Text(liveOrTest + " Delete?",),
-          content: Text(deletePromptText, ),
-          actions: <Widget>[
-             RaisedButton(
-                onPressed: () {
-                  myDebugPrint(
-                      "** $whereAmI index $index - Pressed #Yes#  - is delete allowed? = $isDeleteAllowed",
-                      whereAmI, false);
-                  // 0.31c  Fortunately, this WORKS !
-                  if (isDeleteAllowed) {
-                    String _tempId = connectionValuesList[index].key;
-                    myDebugPrint(
-                        "** $whereAmI: Delete ${connectionValuesList[index].locationText} at $index attempted.try"
+              title: Text(
+                liveOrTest + " Delete?",
+              ),
+              content: Text(
+                deletePromptText,
+              ),
+              actions: <Widget>[
+                RaisedButton(
+                    onPressed: () {
+                      myDebugPrint(
+                          "** $whereAmI index $index - Pressed #Yes#  - is delete allowed? = $isDeleteAllowed",
+                          whereAmI,
+                          false);
+                      // 0.31c  Fortunately, this WORKS !
+                      if (isDeleteAllowed) {
+                        String _tempId = connectionValuesList[index].key;
+                        myDebugPrint(
+                            "** $whereAmI: Delete ${connectionValuesList[index].locationText} at $index attempted.try"
                             " id: ${connectionValuesList[index].key}",
-                        whereAmI, false);
+                            whereAmI,
+                            false);
 
-                    //debugPrint(chatThreadRef.toString());
-                    // workoutRef = TestWorkout/
-                    //                            Yoga/
-                    //  workoutRef.child(_chatThread.type + '/' + _chatThread.threadId).set({
+                        //debugPrint(chatThreadRef.toString());
+                        // workoutRef = TestWorkout/
+                        //                            Yoga/
+                        //  workoutRef.child(_chatThread.type + '/' + _chatThread.threadId).set({
 // todo REINSTATE DATABASE CALL HERE
 //                     chatThreadRef
 //                         .child(connectionValuesList[index].threadId)
@@ -450,22 +630,24 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
 //                       myDebugPrint(
 //                           "** FAILED ?? ** delete of $_tempId", whereAmI);
 //                     }); // end of .then
-                  } // end of if allowed
-                  Navigator.of(context).pop();
-                }, // end of onPressed (Yes)
-                child: Text("Yes")),
-            new FlatButton(
-                onPressed: () {
-                  myDebugPrint("index $index - Pressed #No#", whereAmI, false );
-                  Navigator.of(context).pop();
-                },
-                child: Text("No")),
-          ],
-        ));
+                      } // end of if allowed
+                      Navigator.of(context).pop();
+                    }, // end of onPressed (Yes)
+                    child: Text("Yes")),
+                new FlatButton(
+                    onPressed: () {
+                      myDebugPrint(
+                          "index $index - Pressed #No#", whereAmI, false);
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("No")),
+              ],
+            ));
   } // end of _deleteMenuItem
 
   // pull out common code from navigator function to allow swipe to use it too
   void swipeRightOrClickPrevious() {
+
     if (workingConnectionValuesIndex >= 1) {
       // todo:  need to check for changes & save them if required
       // todo:  Do I need to Await this?
@@ -479,7 +661,7 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
             actions: <Widget>[
               new FlatButton(
                 onPressed: () {
-                  debugPrint("cancelled");
+                  myDebugPrint("Pressed No - exit without saving", "swipeRightOrClickPrevious", false);
                   Navigator.pop(context); // Go back
                 },
                 child: new Text('No'),
@@ -487,14 +669,15 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
 //                                                               added in SAVE button 0.801a
               new FlatButton(
                 onPressed: () {
-                  debugPrint("save & proceed");
+                  myDebugPrint("Pressed SAVE - exit without saving", "swipeRightOrClickPrevious", false);
                   updateConnectionValues(workingConnectionValues);
-                  Navigator.pop(context);             // Continue ?
+                  Navigator.pop(context); // Continue ?
                 },
                 child: new Text('SAVE'),
               ),
               new FlatButton(
                 onPressed: () {
+                  myDebugPrint("Pressed Yes - without saving (unset flag, abandon changes)", "swipeRightOrClickPrevious", false);
                   workingConnectionValuesChanged = false;
                   Navigator.pop(context); // Go back
                 },
@@ -506,14 +689,17 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
       } // end of if workoutchanged
 
       // if user wants to abandon changes, then we turn off Changed, ('Yes' above)
+
       if (!workingConnectionValuesChanged) {
-        workingConnectionValues.locationText = "value set BEFORE setState";
         setState(() {
           workingConnectionValuesIndex = workingConnectionValuesIndex - 1;
-          workingConnectionValues = connectionValuesList[workingConnectionValuesIndex];
-          workingConnectionValues.locationText = "value set INSIDE setState";
+          workingConnectionValues =
+              connectionValuesList[workingConnectionValuesIndex];
+          // workingConnectionValues.locationText =
+          //     "value set INSIDE setState swipeRightOrClickPrevious";
         });
-      } // Do nothing if workoutchanged
+
+      } // Else - Do nothing if workoutchanged still set
     }
   }
 
@@ -531,16 +717,16 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
             actions: <Widget>[
               new FlatButton(
                 onPressed: () {
-                  debugPrint("cancelled");
+                  myDebugPrint("Pressed No - exit without saving", "swipeLeftOrClickNext", false);
                 },
                 child: new Text('No'),
               ),
 //                                                               added in SAVE button 0.801a
               new FlatButton(
                 onPressed: () {
-                  debugPrint("save & proceed");
+                  myDebugPrint("Pressed SAVE - exit without saving", "swipeLeftOrClickNext", false);
                   updateConnectionValues(workingConnectionValues);
-                  Navigator.pop(context);             // Continue ?
+                  Navigator.pop(context); // Continue ?
                 },
                 child: new Text('SAVE'),
               ),
@@ -555,22 +741,31 @@ class _MyNetworkConnectionDetailState extends State<MyNetworkConnectionDetail> {
 
       // if user wants to abandon changes, then we turn off Changed, ('Yes' above)
       if (!workingConnectionValuesChanged) {
-        workingConnectionValues.locationText = "value set BEFORE setState";
         setState(() {
           workingConnectionValuesIndex = workingConnectionValuesIndex + 1;
-          workingConnectionValues = connectionValuesList[workingConnectionValuesIndex];
-          workingConnectionValues.locationText = "value set INSIDE setState";
+          workingConnectionValues =
+              connectionValuesList[workingConnectionValuesIndex];
         });
-      } // Do nothing if workoutchanged
+      } // Else - Do nothing if workoutchanged still set
     }
   }
 }
 
 void updateConnectionValues(ConnectionValues _connection) {
-  myDebugPrint("UPDATE" +
-      _connection.key +" / " +
-      _connection.dateTimeText +" / " +
-      _connection.lat.toStringAsFixed(4) +" / " +
-      _connection.lng.toStringAsFixed(4) +" / "
-  , "** $whereAmI ", false);
+
+  whereAmI = whereAmI + " #updateConnectionValues";
+
+  connectionValuesList[workingConnectionValuesIndex] = workingConnectionValues;
+  workingConnectionValuesChanged = false;
+  myDebugPrint(
+      "UPDATED " +
+          _connection.key +
+          " / " +
+          _connection.dateTimeText +
+          " / " +
+          _connection.lat.toStringAsFixed(4) +
+          " / " +
+          _connection.lng.toStringAsFixed(4) +
+          " / ",
+      whereAmI ,  false);
 }

@@ -2,7 +2,8 @@
 //  Network and version values
 //
 //import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';                    // date formats
+import 'package:intl/intl.dart';
+// import 'package:location/location.dart';                    // date formats
 // my code
 
 // core data               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -14,6 +15,8 @@ String currentRegion = "n/a";                     // if applicable
 double currentLat    = 0.28;                      // lat
 double currentLng    = -0.47;                     // long
 String currentLocationText = "unknown location";
+//Location currentLocation = new Location();
+
 
 // date formats for logging and display            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 final String  appDateFmt      = "EEE dd-MMM-yy HH:mm";

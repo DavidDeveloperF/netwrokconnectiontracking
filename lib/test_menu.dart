@@ -62,27 +62,28 @@ class _MyTestMenuState extends State<MyTestMenu> {
               debugPrint("ABOUT TO RUN getNetworkFunction ~~~~~~~~~~~~~~~~~~~~~~~");
               getNetworkFunction();
               debugPrint("after RUNNING getNetworkFunction ~~~~~~~~~~~~~~~~~~~~~~~");
-              if (workingConnectionValues != null) {
-                debugPrint("INSIDE  workingConnectionValues != NULL ~~~~~~~~~~~~~~~");
-//                getNetworkFunction al;ready adds teh workingCV to connectionValuesList [ this was doubling up...]
-//                connectionValuesList.add(workingConnectionValues);
-                Navigator.push(context,
-                    MaterialPageRoute(
-                        builder: (context) => MyNetworkConnectionDetail()));
-              }
+//               if (workingConnectionValues != null) {
+//                 debugPrint("INSIDE  workingConnectionValues != NULL ~~~~~~~~~~~~~~~");
+// //                getNetworkFunction al;ready adds teh workingCV to connectionValuesList [ this was doubling up...]
+// //                connectionValuesList.add(workingConnectionValues);
+//                 Navigator.push(context,
+//                     MaterialPageRoute(
+//                         builder: (context) => MyNetworkConnectionDetail()));
+//               }
             },
           ),  // run network function
           RaisedButton(                                                     // get network FUNCTION
-            child: Text("MyNetworkConnectionDetail"),
+            child: Text("MyNetwork Connection List"),
             color: Colors.yellowAccent,
             onPressed: () async {
               if (workingConnectionValues != null) {
                 Navigator.push(context,
                     MaterialPageRoute(
-                        builder: (context) => MyNetworkConnectionDetail()));
+                        builder: (context) => MyConnectionListMenu()));
               } //end of IF
             }, // end of onPressed
-          ), // display MyNetworkConnectionDetail
+          ), // display MyConnectionListMenu
+          Divider(),
           RaisedButton(                                                     // get Sensor FUNCTION
             child: Text("Run Sensors function"),
             color: Colors.green,

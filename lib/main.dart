@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    connectionValuesList = [];    // initialise connectionValuesList
+    connectionValuesList = [];  // initialise connectionValuesList
     trackerSessionList = [];    // initialise connectionValuesList
 
     getVersionNumber();         // get app version/build
@@ -72,11 +72,20 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            Divider(),
             RaisedButton(                                                     // get network display
-              child: Text("Test Menu"),
+              child: Text("Network Test Menu"),
               color: Colors.blueAccent,
-              onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => MyTestMenu())),
+              onPressed: () {
+                // run the get Network Function if first time through
+                if (workingConnectionValuesIndex == null || connectionValuesList.isEmpty) {
+                  getNetworkFunction();}
+                else {
+                  debugPrint("connectionValues.length = " + connectionValuesList.length.toString() );
+                }
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => MyTestMenu()));
+              },
             ),
 
                 RaisedButton(                                                     // get Sensor FUNCTION

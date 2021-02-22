@@ -15,6 +15,23 @@ More work
     todo: Can I fix this? >> Plugin project :location_web not found. Please update settings.gradle.
 
 
+Ver 1.0.1+3  Commit local AND to Github
+===========
+OK roughtly working now
+    refreshLocation taken from WATD and put in it's own polllocation.dart file
+        Note: _getLocation function returns type LocationData, not type Location
+    refresh called at start of getNetwork
+        checks permission first - if no location permission, refreshLocation is turned off
+        if permission granted, then will always check location
+    not sure what's happening with SIM permissions - need to test on more devices
+
+NEW - MyConnectionListMenu very simple list builder
+    cloned from WATD release_menu
+
+    A few changes to the organisation & updates to workingConnection & ...List
+
+    TODO: will probably want to turn off some of the debug logs - once I've tried other devices
+
 Ver 1.0.1+2
 ============
     Loads of errors reported, so time for
@@ -26,18 +43,18 @@ Ver 1.0.1+2
         tried changing location to Sheen Gate
         this is Android 10, so lots more logging - see EXCEL
 
-Bugs:   look like the detail display is only looking at workingCV and that alwys has default values
+Bugs:   look like the detail display is only looking at workingCV and that alawys has default values
     - check swipe left/right    - LOOKS OK ??
         added to temp debug code to update location and see what displays
         todo: still getting obscure error on SIM card permission
-going to Commit anyway.... (just in case - laptop has no batttery fitted tonight)
+going to Commit anyway.... (just in case - laptop has no battery fitted tonight)
 
 Ver 1.0.1+1
 ============
 
 OK - did the stpes below and about to save/commit BEFORE I actually try running the firebase stuff
 todo:  Android 8.0 - so the Nexus 5x - asked for permission to phone and permission for location    GOOD
-todo:  on Nexus seems liek the Netwrok widget works
+todo:  on Nexus seems like the Network widget works
 todo:  on Nexus the NetworkDetails is NOT working - seems to only be displaying default values
 
 FIREBASE --- FIREBASE ---FIREBASE --- FIREBASE ---FIREBASE --- FIREBASE ---FIREBASE --- FIREBASE ---FIREBASE --- FIREBASE ---

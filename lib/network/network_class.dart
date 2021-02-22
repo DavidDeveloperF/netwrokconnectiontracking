@@ -126,7 +126,7 @@ ConnectionValues defaultConnectionValues = ConnectionValues  (
   dateTimeText:    "Thu 21-June 18:30",
   lat:             0.28,
   lng:            -0.45003,
-  locationText:   "Default location",
+  locationText:   "Default location (not set)",
   isNetworkAvailable:   false,
   networkType:    "default network type",
   isWifiEnabled:   false,

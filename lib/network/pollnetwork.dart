@@ -1,7 +1,11 @@
 import 'package:android_device_info/android_device_info.dart';
+import 'package:flutter/material.dart';
+import 'package:networkconnectiontracking/network/polllocation.dart';
+import 'package:permission_handler/permission_handler.dart';
+//import 'package:location/location.dart';
+// local
 import 'package:networkconnectiontracking/main_variables.dart';
 import 'package:networkconnectiontracking/utils/utilities.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'network_class.dart';
 
 // ############################################################################  getNetworkFunction
@@ -75,7 +79,8 @@ void setUpNewSession() {
 // ############################################################################
 getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
     bool getNFC, bool getLocation, bool getSIM) async {
-  bool showDebugDetails = false;
+  bool showDebugDetails = true;                                    //  use this to show/suppress kogging
+  String _locationText;
   String whereAmI = "getAllData";
   String whereAmIDetail;
   var data = {}; // data is a generic variable
@@ -114,15 +119,33 @@ getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
   var permissionLoc = await PermissionHandler()
       .checkPermissionStatus(PermissionGroup.locationAlways);
   if (permissionLoc == PermissionStatus.denied) {
-    //                                         if no permission, request permission
+    //                                        if no permission, turn off getLocation
+    getLocation = false;
+    currentLocationText = defaultConnectionValues.locationText;
+    currentLat          = defaultConnectionValues.lat;
+    currentLng          = defaultConnectionValues.lng;
+    //                                        if no permission, request permission
     var permissionsLoc = await PermissionHandler()
         .requestPermissions([PermissionGroup.locationAlways]);
     if (permissionsLoc[PermissionGroup.locationAlways] ==
         PermissionStatus.granted) {
-      var location = await AndroidDeviceInfo().getLocationInfo();
-      data.addAll(location);
+      // var location = await AndroidDeviceInfo().getLocationInfo();
+      // data.addAll(location);
+      getLocation = true;               //    turn it back on again if permission granted
     } // end of GRANTED
   } // end of DENIED
+
+  if (getLocation) {
+    try {
+      // TODO this does not seem to be working???
+      whereAmIDetail = whereAmI + " location";
+      refreshLocation();                                                  // alt code taken from WATD
+    } catch (e) {
+      myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
+    }
+  } // end of getLocation
+
+
 
   if (getDisplay) {
     try {
@@ -157,6 +180,8 @@ getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
       myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
     }
   } // end of getBattery
+
+
 
   if (getMemory) {
     try {
@@ -207,24 +232,6 @@ getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
     }
   } // end of getNFC
 
-  if (getLocation) {
-    try {
-      // TODO this does not seem to be working???
-      whereAmIDetail = whereAmI + " location";
-      final location =
-          await AndroidDeviceInfo().getLocationInfo(); // location data
-      if (showDebugDetails) {
-        // don't always want debug detail
-        location.forEach((key, value) {
-          myDebugPrint(key + ": " + value.toString(), whereAmIDetail, false);
-        });
-      }
-      data.addAll(location);
-    } catch (e) {
-      myDebugPrint("The exception thrown is $e", whereAmIDetail, true);
-    }
-  } // end of getLocation
-
   // maybe working - not sure
   // todo: follow up obscure errors depending on the device / android version
   if (getSIM) {
@@ -244,8 +251,13 @@ getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
 
   // in case any of the preceding data are missing, load default values first
   workingConnectionValues = defaultConnectionValues;
-  String dummyLocationText = "??";
-  if (currentLat == 0.0)
+
+  // if (currentLat == 0.0) {
+  //   _locationText = "no location data";
+  // } else {
+  //   String _locationText = "Location is lat: " +currentLat.toStringAsFixed(4) +
+  //                                     " lng:"  +currentLng.toStringAsFixed(4);
+  // }
 
   workingConnectionValues = ConnectionValues(
     key:              getDateKey(DateTime.now()).toString(),
@@ -267,7 +279,10 @@ getAllData(bool getDisplay, bool getBattery, bool getMemory, bool getNetwork,
     speedUnits:       "Mbps",
   );
 
+
+  debugPrint("about to test workingConnectionValuesIndex for null");
   if (workingConnectionValuesIndex != null) {
+    debugPrint("INSIDE connectionValuesList.add");
     connectionValuesList.add(workingConnectionValues);
     workingConnectionValuesIndex = workingConnectionValuesIndex + 1;
   }
